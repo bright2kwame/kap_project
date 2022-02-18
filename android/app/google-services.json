@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "533651686145",
+    "project_id": "knowledge-access-and-power",
+    "storage_bucket": "knowledge-access-and-power.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:533651686145:android:2885ef1bd3e10bd9acd100",
+        "android_client_info": {
+          "package_name": "com.knowledge_access_power.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "533651686145-vknt1fvs7k3t8kor3nmt93segu4ma4ph.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFOEoZJgkNxNrJhkENdba_DPKP5T1fCa0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "533651686145-vknt1fvs7k3t8kor3nmt93segu4ma4ph.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
