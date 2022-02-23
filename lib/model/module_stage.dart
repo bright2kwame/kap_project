@@ -4,11 +4,19 @@ class ModuleStage {
   String id = "";
   String title = "";
   String content = "";
+  String image = "";
   String contentVideo = "";
   String noOfParticipants = "";
-  List<ModuleOptions> questions = [];
+  bool hasCompleted = false;
 
-  ModuleStage({this.id = "", this.title = "", this.noOfParticipants = ""});
+  ModuleStage(
+      {this.id = "",
+      this.title = "",
+      this.noOfParticipants = "",
+      this.image = "",
+      this.content = "",
+      this.contentVideo = "",
+      this.hasCompleted = false});
 
   ModuleStage.empty();
   // Convert a ModuleStage into a Map. The keys must correspond to the names of the
@@ -17,7 +25,6 @@ class ModuleStage {
     return {
       'id': id,
       'title': title,
-      'questions': questions,
     };
   }
 

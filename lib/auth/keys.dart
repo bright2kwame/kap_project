@@ -2,6 +2,7 @@ import 'dart:async' show Future;
 import 'dart:convert' show json;
 import 'package:flutter/services.dart' show rootBundle;
 
+//create a keys folder and add a file called secrets.json containing the keys
 class Secret {
   final String twitterApiKey;
   final String twitterApiSecret;
@@ -23,11 +24,9 @@ class Secret {
 class SecretLoader {
   SecretLoader();
 
-  Future<Secret> load() {
-    return rootBundle.loadStructuredData<Secret>("auth/secrets.json",
-        (jsonStr) async {
-      final secret = Secret.fromJson(json.decode(jsonStr));
-      return secret;
-    });
+  Future<Secret> load() async {
+    String path = "assets/secrets.json";
+    final jsondata = await rootBundle.loadString(path);
+    return Secret.fromJson(json.decode(jsondata));
   }
 }

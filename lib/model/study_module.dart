@@ -8,10 +8,8 @@ class StudyModule {
   String date = "";
   String moduleCategory = "";
   String noOfParticipants = "";
-  bool isRewarded = false;
-  bool hasQuizes = false;
   String expiryDate = "";
-  List<ModuleStage> stages = [];
+  String noOfStages = "";
 
   StudyModule({
     this.id = "",
@@ -19,10 +17,9 @@ class StudyModule {
     this.summary = "",
     this.coverImage = "",
     this.date = "",
+    this.noOfStages = "0",
     this.moduleCategory = "",
     this.noOfParticipants = "",
-    this.isRewarded = false,
-    this.hasQuizes = true,
     this.expiryDate = "",
   });
 
@@ -37,8 +34,6 @@ class StudyModule {
       'coverImage': coverImage,
       'date': date,
       'expiryDate': expiryDate,
-      'isRewarded': isRewarded,
-      'hasQuizes': hasQuizes,
       'moduleCategory': moduleCategory,
     };
   }

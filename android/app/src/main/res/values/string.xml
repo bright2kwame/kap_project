@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">Knowledge &amp; Access Power</string>
+  <string name="facebook_app_id">519999266215403</string>
+  <string name="fb_login_protocol_scheme">fb519999266215403</string>
+  <string name="facebook_client_token">694e77790b14f0e5a2fbc0fe4fff5c56</string>
+</resources>

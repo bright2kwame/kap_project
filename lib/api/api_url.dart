@@ -1,30 +1,27 @@
 class ApiUrl {
   //MARK: get the base url
   String getBaseUrl() {
-    var baseTestUrl = "https://somtinsomtin-api.herokuapp.com/api/v1.0/";
-    var baseLiveUrl = "https://somtinsomtin-api.herokuapp.com/api/v1.0/";
-    const bool _kReleaseMode = const bool.fromEnvironment("dart.vm.product");
+    var baseTestUrl =
+        "https://kapinitiative-test-api.herokuapp.com/api/v2.0/mobile/";
+    var baseLiveUrl =
+        "https://kapinitiative-test-api.herokuapp.com/api/v2.0/mobile/";
+    const bool _kReleaseMode = bool.fromEnvironment("dart.vm.product");
     return _kReleaseMode ? baseTestUrl : baseLiveUrl;
   }
 
-  //MARK: check number url
-  String checkPhone() {
-    return getBaseUrl() + "users/check_phone_number/";
+  //MARK: module category url
+  String filterModuleCategory() {
+    return getBaseUrl() + "modules/filter_categories/";
   }
 
-  //MARK: verify number url
-  String verifyPhoneumber() {
-    return getBaseUrl() + "users/verify_phone_number/";
-  }
-
-  //MARK: verify number url
-  String resendVerificationCode() {
-    return getBaseUrl() + "users/resend_signup_verification/";
+  //MARK: filter modules
+  String filterModules() {
+    return getBaseUrl() + "modules/filter_modules/";
   }
 
   //MARK: complete sign up url
   String completeSignUp() {
-    return getBaseUrl() + "mobile/users/register_or_login/";
+    return getBaseUrl() + "users/social_media_login/";
   }
 
   //MARK: saving player id
@@ -34,17 +31,22 @@ class ApiUrl {
 
   //MARK: my profile url
   String myProfile() {
-    return getBaseUrl() + "mobile/users/me/";
+    return getBaseUrl() + "users/me/";
   }
 
-  //MARK: change password
-  String changePassword() {
-    return getBaseUrl() + "users/change_password/";
+  //MARK: all my modules
+  String myModules() {
+    return getBaseUrl() + "modules/filter_my_modules/";
   }
 
-  //MARK: init password reset
-  String initPasswordReset() {
-    return getBaseUrl() + "users/forgot_password/";
+//MARK: my modules
+  String moduleMySteps() {
+    return getBaseUrl() + "modules/filter_my_sub_modules/";
+  }
+
+  //MARK: all module steps
+  String moduleSteps() {
+    return getBaseUrl() + "modules/filter_sub_modules/";
   }
 
   //MARK: password reset

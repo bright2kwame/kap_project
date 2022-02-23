@@ -13,7 +13,7 @@ class ApiService {
       "It appears you are offline, connect and try again.";
 
   static ApiService get(String token) {
-    basicHeaders = {"Authorization": "Bearer $token"};
+    basicHeaders = {"Authorization": "Token $token"};
     return _apiService;
   }
 
@@ -33,17 +33,19 @@ class ApiService {
 
   //MARK: post data
   /// @url, url to fetch data
-  Future<dynamic> postDataNoHeader(String url, Map<String, String> data) {
+  Future<dynamic> postDataNoHeader(String url, Map<String, String> data) async {
     Map<String, String> emptyHeader = {};
-    return _netUtil.post(url, emptyHeader, data, utf8).then((dynamic data) {
-      var statusCode = data["response_code"].toString();
+    return _netUtil.post(url, emptyHeader, data, utf8).then((dynamic value) {
+      var statusCode = value["response_code"].toString();
       if (statusCode.isNotEmpty) {
-        return data;
+        return value;
       } else {
-        throw Exception(data["message"] != null
-            ? data["message"].toString()
-            : data.toString());
+        throw Exception(value["detail"] != null
+            ? value["detail"].toString()
+            : value.toString());
       }
+    }).onError((error, stackTrace) {
+      throw Exception(error);
     });
   }
 
@@ -57,6 +59,8 @@ class ApiService {
       } else {
         throw Exception(data["detail"] ?? data.toString());
       }
+    }).onError((error, stackTrace) {
+      throw Exception(error);
     });
   }
 
@@ -70,6 +74,8 @@ class ApiService {
       } else {
         throw Exception(data["detail"] ?? data.toString());
       }
+    }).onError((error, stackTrace) {
+      throw Exception(error);
     });
   }
 
@@ -83,6 +89,8 @@ class ApiService {
       } else {
         throw Exception(data["detail"] ?? data.toString());
       }
+    }).onError((error, stackTrace) {
+      throw Exception(error);
     });
   }
 
@@ -99,6 +107,8 @@ class ApiService {
       } else {
         throw Exception(data["detail"] ?? data.toString());
       }
+    }).onError((error, stackTrace) {
+      throw Exception(error);
     });
   }
 }

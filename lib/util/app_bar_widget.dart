@@ -7,17 +7,23 @@ class AppBarWidget {
   static get whiteAppBar => AppBar(
       systemOverlayStyle: const SystemUiOverlayStyle(
         systemNavigationBarColor: Colors.white, // Navigation bar
-        statusBarColor: Colors.white, // Status bar
+        statusBarColor: Colors.white,
       ),
       backgroundColor: Colors.transparent,
       elevation: 0.0,
       leading: const BackButton(color: Colors.white));
 
   static primaryAppBar(String title) => AppBar(
-        systemOverlayStyle: SystemUiOverlayStyle.light,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          systemNavigationBarColor: Colors.white, // Navigation bar
+          statusBarColor: Colors.white,
+        ),
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
         title: Text(
           title,
-          style: AppTextStyle.semiBoldTextStyle(Colors.white, 16.0),
+          style: AppTextStyle.normalTextStyle(Colors.white, 16.0),
         ),
         backgroundColor: AppColor.primaryColor,
         centerTitle: true,
@@ -28,10 +34,10 @@ class AppBarWidget {
         iconTheme: const IconThemeData(
           color: Colors.white,
         ),
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         title: Text(
           title,
-          style: AppTextStyle.semiBoldTextStyle(Colors.white, 16.0),
+          style: AppTextStyle.normalTextStyleShadowed(Colors.white, 16.0),
         ),
         backgroundColor: Colors.transparent,
         centerTitle: true,

@@ -1,14 +1,23 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_progress_hud/flutter_progress_hud.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:knowledge_access_power/api/api_service.dart';
 import 'package:knowledge_access_power/api/api_url.dart';
+import 'package:knowledge_access_power/api/network_util.dart';
+import 'package:knowledge_access_power/api/parse_data.dart';
 import 'package:knowledge_access_power/auth/keys.dart';
 import 'package:knowledge_access_power/home/home_tab_page.dart';
-import 'package:knowledge_access_power/model/user.dart' as UserItem;
+import 'package:knowledge_access_power/model/db_operations.dart';
+import 'package:knowledge_access_power/model/user.dart';
 import 'package:knowledge_access_power/resources/image_resource.dart';
+import 'package:knowledge_access_power/resources/string_resource.dart';
+import 'package:knowledge_access_power/popup/app_alert_dialog.dart';
 import 'package:knowledge_access_power/util/app_bar_widget.dart';
 import 'package:knowledge_access_power/util/app_button_style.dart';
 import 'package:knowledge_access_power/util/app_color.dart';
@@ -62,7 +71,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
             child: Container(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
           child: Text(
-            "To Effectively use KAP, kindly conect with any of your social media accounts",
+            "To Effectively use KAP, kindly connect with any of your social media accounts",
             textAlign: TextAlign.center,
             style: AppTextStyle.normalTextStyleShadowed(Colors.white, 16),
           ),
@@ -74,7 +83,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
             onPressed: () {
               _initialiseSocialLogin(context, SocialLoginType.GOOGLE);
             },
-            child: _signInButton(AppColor.googleColor, "Connect With Google",
+            child: _signInButton(AppColor.googleColor, "Sign In With Google",
                 ImageResource.googleIcon),
             style: AppButtonStyle.roundedPlainEdgeButton,
           ),
@@ -86,7 +95,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
             onPressed: () {
               _initialiseSocialLogin(context, SocialLoginType.TWITTER);
             },
-            child: _signInButton(AppColor.twitterColor, "Connect With Twitter",
+            child: _signInButton(AppColor.twitterColor, "Sign In With Twitter",
                 ImageResource.twitterIcon),
             style: AppButtonStyle.roundedPlainEdgeButton,
           ),
@@ -99,7 +108,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
               _initialiseSocialLogin(context, SocialLoginType.FACEBOOK);
             },
             child: _signInButton(AppColor.facebookColor,
-                "Connect With FaceBook", ImageResource.facebookIcon),
+                "Sign In With FaceBook", ImageResource.facebookIcon),
             style: AppButtonStyle.roundedPlainEdgeButton,
           ),
         ),
@@ -161,11 +170,11 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     ));
   }
 
+//MARK: start social sign in
   Future<void> _initialiseSocialLogin(
       BuildContext context, SocialLoginType type) async {
     final progress = ProgressHUD.of(context);
     progress?.show();
-
     UserCredential? userCredential;
     switch (type) {
       case SocialLoginType.FACEBOOK:
@@ -182,11 +191,57 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
     if (userCredential != null) {
       User? user = await _getUser(userCredential);
-      print(user?.email);
-    } else {
-      print("No credentials");
+      if (user != null) {
+        Map<String, String> postData = {};
+        postData.putIfAbsent(
+            "email", () => user.email == null ? user.uid : user.email!);
+        postData.putIfAbsent(
+            "first_name", () => user.displayName!.split(" ")[0]);
+        postData.putIfAbsent(
+            "last_name", () => user.displayName!.split(" ")[1]);
+        postData.putIfAbsent(
+            "phone", () => user.phoneNumber == null ? "" : user.phoneNumber!);
+        postData.putIfAbsent(
+            "user_avatar", () => user.photoURL == null ? "" : user.photoURL!);
+
+        ApiService()
+            .postDataNoHeader(ApiUrl().completeSignUp(), postData)
+            .then((value) {
+          var statusCode = value["response_code"].toString();
+          if (statusCode == "100") {
+            saveUserAndLogin(value);
+          } else {
+            String errorMessage = value["message"].toString();
+            _presentErrorMessage(context, type, errorMessage);
+          }
+        }).whenComplete(() {
+          progress?.dismiss();
+        }).onError((error, stackTrace) {
+          String errorMessage = error.toString();
+          _presentErrorMessage(context, type, errorMessage);
+        });
+        return;
+      }
     }
     progress?.dismiss();
+    String errorMessage = "Failed to connect with your account. Try again";
+    _presentErrorMessage(context, type, errorMessage);
+  }
+
+  //MARK: show the error, message
+  void _presentErrorMessage(
+      BuildContext context, SocialLoginType type, String errorMessage) {
+    AppAlertDialog()
+        .showAlertDialog(context, StringResource.dialogTitle, errorMessage, () {
+      _initialiseSocialLogin(context, type);
+    });
+  }
+
+  Future<void> saveUserAndLogin(var data) async {
+    var userData = data["results"];
+    UserItem userItem = ParseApiData().parseUser(userData);
+    await DBOperations().insertUser(userItem);
+    _navigateToNextScreen();
   }
 
 //MARK: sign in with google
@@ -209,9 +264,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 //MARK:  facebook login
   Future<UserCredential?> signInWithFacebook() async {
     // Trigger the sign-in flow
-    final LoginResult loginResult = await FacebookAuth.instance.login();
-
-    if (loginResult.accessToken == null) {
+    final LoginResult loginResult = await FacebookAuth.instance
+        .login(permissions: ["email", "public_profile"]);
+    if (loginResult.status != LoginStatus.success) {
       return null;
     }
     // Create a credential from the access token
@@ -224,18 +279,11 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 //MARK: twitter login
   Future<UserCredential?> signInWithTwitter() async {
     // Create a TwitterLogin instance
-    final twitterLogin1 = TwitterLogin(
-        apiKey: 'qQWAbMDseZ8QLevpC0QsokHZH',
-        apiSecretKey: 'bnIvyfXCsJDl1NKTnb4tTDdNOrtNVlkiVVfuVUpSn33cvloytk',
-        redirectURI:
-            "https://knowledge-access-and-power.firebaseapp.com/__/auth/handler");
-
     var secretLoader = await SecretLoader().load();
     final twitterLogin = TwitterLogin(
         apiKey: secretLoader.twitterApiKey,
         apiSecretKey: secretLoader.twitterApiSecret,
         redirectURI: secretLoader.twitterRedirectUrl);
-
     // Trigger the sign-in flow
     final authResult = await twitterLogin.login();
     if (authResult.authToken == null) {
@@ -257,12 +305,12 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       user = credential.user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'account-exists-with-different-credential') {
-        // handle the error here
+        print(e);
       } else if (e.code == 'invalid-credential') {
-        // handle the error here
+        print(e);
       }
     } catch (e) {
-      // handle the error here
+      print(e);
     }
     return user;
   }

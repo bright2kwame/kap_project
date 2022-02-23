@@ -1,4 +1,4 @@
-class User {
+class UserItem {
   String id = "";
   String firstName = "";
   String lastName = "";
@@ -8,8 +8,10 @@ class User {
   String avatar = "";
   String token = "";
   String points = "";
+  String badge = "";
+  String username = "";
 
-  User(
+  UserItem(
       {this.id = "",
       this.firstName = "",
       this.lastName = "",
@@ -18,9 +20,11 @@ class User {
       this.phone = "",
       this.avatar = "",
       this.points = "0",
-      this.token = ""});
+      this.badge = "",
+      this.token = "",
+      this.username = ""});
 
-  User.empty();
+  UserItem.empty();
   // Convert a Dog into a Map. The keys must correspond to the names of the
   // columns in the database.
   Map<String, dynamic> toMap() {
@@ -34,6 +38,8 @@ class User {
       'avatar': avatar,
       'token': token,
       'points': points,
+      'badge': badge,
+      'username': username
     };
   }
 
@@ -47,6 +53,7 @@ class User {
       'phone': phone,
       'avatar': avatar,
       'points': points,
+      'badge': badge,
     };
   }
 
@@ -54,6 +61,6 @@ class User {
   // each dog when using the print statement.
   @override
   String toString() {
-    return 'User{id: $id, firstName: $firstName, lastName: $lastName, email: $email, phone: $phone, token: $token, points: $points}';
+    return 'UserItem{id: $id, firstName: $firstName, lastName: $lastName, email: $email, phone: $phone, token: $token, points: $points}';
   }
 }

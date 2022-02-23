@@ -9,8 +9,9 @@ import 'package:knowledge_access_power/home/knowledge_page.dart';
 import 'package:knowledge_access_power/home/settings_page.dart';
 import 'package:knowledge_access_power/model/db_operations.dart';
 import 'package:knowledge_access_power/model/user.dart';
+import 'package:knowledge_access_power/resources/image_resource.dart';
 import 'package:knowledge_access_power/resources/string_resource.dart';
-import 'package:knowledge_access_power/util/app_alert_dialog.dart';
+import 'package:knowledge_access_power/popup/app_alert_dialog.dart';
 import 'package:knowledge_access_power/util/app_color.dart';
 import 'package:knowledge_access_power/util/app_text_style.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,7 +30,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _currentIndex = 1;
   String _numberUnreadCount = "0";
-  User _user = User();
+  UserItem _user = UserItem();
   String _displayTitle = "Knowledge & Access Power";
   final List<Widget> _children = [
     const HomePage(),
@@ -149,14 +150,9 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
               ),
             ),
           ],
-          leading: Icon(
-            _tabIcons[_currentIndex],
-            color: Colors.white,
-          ),
           title: Text(_displayTitle,
-              style: AppTextStyle.semiBoldTextStyle(Colors.white, 16.0)),
+              style: AppTextStyle.normalTextStyle(Colors.white, 16.0)),
           backgroundColor: AppColor.primaryColor,
-          centerTitle: true,
           elevation: 0,
         ),
         body: IndexedStack(

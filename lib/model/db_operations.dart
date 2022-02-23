@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 
 class DBOperations {
   // Define a function that inserts dogs into the database
-  Future<void> insertUser(User user) async {
+  Future<void> insertUser(UserItem user) async {
     // Get a reference to the database.
     final db = await ManageDatabase().initialise();
     await db.insert(
@@ -16,7 +16,7 @@ class DBOperations {
   }
 
   // A method that retrieves all the dogs from the dogs table.
-  Future<List<User>> users() async {
+  Future<List<UserItem>> users() async {
     // Get a reference to the database.
     final db = await ManageDatabase().initialise();
     final List<Map<String, dynamic>> maps = await db.query('users');
@@ -26,8 +26,8 @@ class DBOperations {
     });
   }
 
-  User parseQueryData(dynamic data) {
-    return User(
+  UserItem parseQueryData(dynamic data) {
+    return UserItem(
       id: data['id'],
       firstName: data['firstName'],
       lastName: data['lastName'],
@@ -37,10 +37,11 @@ class DBOperations {
       avatar: data['avatar'],
       token: data['token'],
       points: data['points'],
+      username: data['username'],
     );
   }
 
-  Future<void> updateUser(User user) async {
+  Future<void> updateUser(UserItem user) async {
     // Get a reference to the database.
     final db = await ManageDatabase().initialise();
 
@@ -54,7 +55,7 @@ class DBOperations {
   }
 
   //MARK: get user
-  Future<User> getUser() async {
+  Future<UserItem> getUser() async {
     final db = await ManageDatabase().initialise();
     var queryResult = await db.query('users', limit: 1);
     return parseQueryData(queryResult[0]);

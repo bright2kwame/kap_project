@@ -59,6 +59,7 @@
             <string>Editor</string>
             <key>CFBundleURLSchemes</key>
             <array>
+                <string>fb519999266215403</string>
                 <string>com.googleusercontent.apps.533651686145-7k3dq12alj6hhe6m04j8tahp4njqoifu</string>
             </array>
         </dict>
@@ -71,6 +72,12 @@
             </array>
         </dict>
     </array>
+    <key>FacebookAppID</key>
+    <string>519999266215403</string>
+    <key>FacebookClientToken</key>
+    <string>694e77790b14f0e5a2fbc0fe4fff5c56</string>
+    <key>FacebookDisplayName</key>
+    <string>Knowledge &amp; Access Power</string>
     
 </dict>
 </plist>

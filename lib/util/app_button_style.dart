@@ -6,7 +6,7 @@ class AppButtonStyle {
       foregroundColor: MaterialStateProperty.all<Color>(AppColor.primaryColor),
       backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
       padding: MaterialStateProperty.all<EdgeInsets>(
-          const EdgeInsets.symmetric(vertical: 16, horizontal: 16)),
+          const EdgeInsets.symmetric(vertical: 8, horizontal: 8)),
       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(2.0),

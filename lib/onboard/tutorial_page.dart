@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:knowledge_access_power/auth/keys.dart';
 import 'package:knowledge_access_power/model/tutorial_item.dart';
 import 'package:knowledge_access_power/onboard/create_account_page.dart';
 import 'package:knowledge_access_power/resources/image_resource.dart';
@@ -20,15 +21,18 @@ class _TutorialPageState extends State<TutorialPage> {
   final _pages = [
     TutorialItem(
         title: "Welcome To KAP",
-        message: "Your Virtual Gift Voucher That Keeps on Giving",
+        message:
+            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
         imageResource: ImageResource.onboardOne),
     TutorialItem(
         title: "Your Health",
-        message: "A Gift That Gives Endless Options",
+        message:
+            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
         imageResource: ImageResource.onboardTwo),
     TutorialItem(
         title: "Stay Informed",
-        message: "A Gift That You Can Take Anywhere",
+        message:
+            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
         imageResource: ImageResource.onboardThree),
   ];
 
@@ -48,6 +52,11 @@ class _TutorialPageState extends State<TutorialPage> {
       list.add(_sliderItem(_pages[i]));
     }
     return list;
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   Widget _indicator(bool isActive) {

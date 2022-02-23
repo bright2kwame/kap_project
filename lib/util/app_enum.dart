@@ -3,3 +3,9 @@ enum SocialLoginType {
   GOOGLE,
   TWITTER,
 }
+
+enum ModuleStageStatus {
+  STARTED,
+  COMPLETED,
+  PROGRESS,
+}
