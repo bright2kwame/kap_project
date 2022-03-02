@@ -9,4 +9,6 @@ class ImageResource {
   static get twitterIcon => "assets/twitter_icon.png";
   static get facebookIcon => "assets/facebook_icon.png";
   static get googleIcon => "assets/google_icon.png";
+  static get sadIcon => "assets/sad.png";
+  static get smileIcon => "assets/smile.png";
 }

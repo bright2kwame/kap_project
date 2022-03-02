@@ -9,3 +9,13 @@ enum ModuleStageStatus {
   COMPLETED,
   PROGRESS,
 }
+
+enum QuestionType {
+  PRE_SUB_MODULE,
+  POST_SUB_MODULE,
+}
+
+enum AnswerResponseType {
+  RETRY,
+  MARKING_SCHEME,
+}

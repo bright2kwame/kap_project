@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,8 +10,12 @@ import 'package:knowledge_access_power/model/db_operations.dart';
 import 'package:knowledge_access_power/model/module_stage.dart';
 import 'package:knowledge_access_power/model/study_module.dart';
 import 'package:knowledge_access_power/model/user.dart';
+import 'package:knowledge_access_power/popup/app_alert_dialog.dart';
 import 'package:knowledge_access_power/popup/bottom_sheet_page.dart';
+import 'package:knowledge_access_power/resources/string_resource.dart';
+import 'package:knowledge_access_power/sub_module/module_detail.dart';
 import 'package:knowledge_access_power/util/app_bar_widget.dart';
+import 'package:knowledge_access_power/util/app_button_style.dart';
 import 'package:knowledge_access_power/util/app_color.dart';
 import 'package:knowledge_access_power/util/app_text_style.dart';
 import 'package:knowledge_access_power/util/progress_indicator_bar.dart';
@@ -27,6 +32,7 @@ class AllModuleStepsPage extends StatefulWidget {
 
 class _AllModuleStepsPageState extends State<AllModuleStepsPage> {
   bool _loadingData = false;
+  bool _subscribed = false;
   final List<ModuleStage> _moduleStages = [];
   final _nextPageThreshold = 5;
   final List<String> _loadedPages = [];
@@ -39,6 +45,7 @@ class _AllModuleStepsPageState extends State<AllModuleStepsPage> {
       setState(() {
         _user = value;
       });
+      _getModuleStatus(ApiUrl().checkModuleStatus());
       _getModuleSteps(ApiUrl().moduleSteps(), true);
     });
 
@@ -62,6 +69,7 @@ class _AllModuleStepsPageState extends State<AllModuleStepsPage> {
           _moduleStages.clear();
         }
         results.forEach((item) {
+          item.putIfAbsent("module_id", () => widget.studyModule.id);
           var dataCleaned = ParseApiData().parseModuleStage(item);
           _moduleStages.add(dataCleaned);
         });
@@ -74,6 +82,50 @@ class _AllModuleStepsPageState extends State<AllModuleStepsPage> {
     }).onError((error, stackTrace) {
       print(error);
     });
+  }
+
+  void _subscribeModule() {
+    setState(() {
+      _loadingData = true;
+    });
+    String url = ApiUrl().subscribeToModule();
+    Map<String, String> postData = {};
+    postData.putIfAbsent("module_id", () => widget.studyModule.id);
+
+    ApiService.get(_user.token).postData(url, postData).then((value) {
+      var statusCode = value["response_code"].toString();
+      _subscribed = statusCode == "100";
+      setState(() {});
+    }).whenComplete(() {
+      setState(() {
+        _loadingData = false;
+      });
+    }).onError((error, stackTrace) {
+      print(error);
+    });
+  }
+
+  void _getModuleStatus(String url) {
+    setState(() {
+      _loadingData = true;
+    });
+    Map<String, String> postData = {};
+    postData.putIfAbsent("module_id", () => widget.studyModule.id);
+
+    ApiService.get(_user.token)
+        .postData(url, postData)
+        .then((value) {
+          var statusCode = value["response_code"].toString();
+          print(url + " : " + statusCode);
+
+          setState(() {
+            _subscribed = statusCode == "100";
+          });
+        })
+        .whenComplete(() {})
+        .onError((error, stackTrace) {
+          print(url + " : " + error.toString());
+        });
   }
 
   @override
@@ -104,7 +156,7 @@ class _AllModuleStepsPageState extends State<AllModuleStepsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(widget.studyModule.title,
-                  style: AppTextStyle.normalTextStyle(Colors.black, 14)),
+                  style: AppTextStyle.normalTextStyle(Colors.black, 16)),
               const SizedBox(
                 height: 10,
               ),
@@ -150,22 +202,31 @@ class _AllModuleStepsPageState extends State<AllModuleStepsPage> {
                             AppColor.primaryDarkColor, 12),
                       ),
                     ),
-                    Container(
-                      color: AppColor.facebookColor,
-                      padding: EdgeInsets.all(4),
-                      child: Text(
-                        "COMPLETED",
-                        style: AppTextStyle.normalTextStyle(Colors.white, 10),
-                      ),
-                    )
                   ],
                 ),
               ),
               const SizedBox(
                 height: 16,
               ),
-              Text("Modules:",
-                  style: AppTextStyle.normalTextStyle(Colors.black, 14)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text("Modules:",
+                      style: AppTextStyle.normalTextStyle(Colors.black, 14)),
+                  _subscribed
+                      ? Text(
+                          "SUBSCRIBED",
+                          style: AppTextStyle.normalTextStyle(Colors.black, 12),
+                        )
+                      : TextButton(
+                          style: AppButtonStyle.squaredSmallColoredEdgeButton,
+                          onPressed: () {
+                            _subscribeModule();
+                          },
+                          child: const Text("SUBSCRIBE"))
+                ],
+              ),
               _loadingData
                   ? ProgressIndicatorBar()
                   : Container(
@@ -207,61 +268,100 @@ class _AllModuleStepsPageState extends State<AllModuleStepsPage> {
   }
 
   void _handleStepClick(ModuleStage moduleStage) {
-    BottomSheetPage().showModuleStag(context, moduleStage, () {});
+    if (!_subscribed) {
+      AppAlertDialog().showAlertDialog(
+          context,
+          StringResource.successDialogTitle,
+          "You are currently not subscribed to the this module. Subscribe first",
+          () {
+        _subscribeModule();
+      });
+      return;
+    }
+    Navigator.of(context)
+        .push(MaterialPageRoute(
+            builder: (context) => ModuleDetailPage(
+                  moduleStage: moduleStage,
+                )))
+        .then((value) => {});
   }
 
   Widget _moduleStageItemView(
       BuildContext buildContext, ModuleStage moduleStage) {
-    return SizedBox(
-        height: 44,
-        child: Row(
+    return Container(
+        margin: const EdgeInsets.only(top: 8),
+        height: 100,
+        child: Stack(
           children: [
-            SizedBox(
-              width: 24,
-              child: moduleStage.contentVideo.isEmpty
-                  ? const Icon(
-                      CupertinoIcons.book_circle,
-                      color: Colors.grey,
-                      size: 24,
-                    )
-                  : const Icon(
-                      CupertinoIcons.play_circle,
-                      color: Colors.grey,
-                      size: 24,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(5.0),
+              child: Image(
+                image: CachedNetworkImageProvider(moduleStage.image),
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: 100,
+              ),
+            ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(5.0),
+              child: Container(
+                height: 100,
+                color: Colors.black.withAlpha(100),
+              ),
+            ),
+            Positioned(
+                bottom: 4,
+                right: 16,
+                left: 16,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 24,
+                      child: moduleStage.contentVideo.isEmpty
+                          ? const Icon(
+                              CupertinoIcons.book_circle,
+                              color: Colors.white,
+                              size: 24,
+                            )
+                          : const Icon(
+                              CupertinoIcons.play_circle,
+                              color: Colors.white,
+                              size: 24,
+                            ),
                     ),
-            ),
-            Expanded(
-              child: Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Text(
-                    moduleStage.title,
-                    style: AppTextStyle.normalTextStyle(
-                        AppColor.primaryDarkColor, 14),
-                  )),
-            ),
-            Text(
-              " • ",
-              style: AppTextStyle.semiBoldTextStyle(Colors.grey, 16),
-            ),
-            Text(
-              "${moduleStage.noOfParticipants} Participated",
-              style:
-                  AppTextStyle.normalTextStyle(AppColor.primaryDarkColor, 10),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(2),
-              child: moduleStage.hasCompleted
-                  ? const Icon(
-                      CupertinoIcons.check_mark_circled_solid,
-                      color: Colors.green,
-                      size: 24,
-                    )
-                  : const Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.grey,
-                      size: 16,
+                    Expanded(
+                      child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Text(
+                            moduleStage.title,
+                            style:
+                                AppTextStyle.normalTextStyle(Colors.white, 14),
+                          )),
                     ),
-            )
+                    Text(
+                      " • ",
+                      style: AppTextStyle.semiBoldTextStyle(Colors.white, 16),
+                    ),
+                    Text(
+                      "${moduleStage.noOfParticipants} Participated",
+                      style: AppTextStyle.normalTextStyle(Colors.white, 10),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(2),
+                      child: moduleStage.hasCompleted
+                          ? const Icon(
+                              CupertinoIcons.check_mark_circled_solid,
+                              color: Colors.green,
+                              size: 24,
+                            )
+                          : const Icon(
+                              Icons.arrow_forward_ios,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                    )
+                  ],
+                ))
           ],
         ));
   }

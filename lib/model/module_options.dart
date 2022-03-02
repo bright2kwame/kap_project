@@ -2,12 +2,15 @@ class ModuleOptions {
   String id = "";
   String label = "";
   String image = "";
+  String type = "";
+  bool isCorrect = false;
 
-  ModuleOptions({
-    this.id = "",
-    this.label = "",
-    this.image = "",
-  });
+  ModuleOptions(
+      {this.id = "",
+      this.label = "",
+      this.image = "",
+      this.type = "",
+      this.isCorrect = false});
 
   ModuleOptions.empty();
   // Convert a ModuleOptions into a Map. The keys must correspond to the names of the

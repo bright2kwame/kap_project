@@ -4,11 +4,15 @@ class ModuleEvent {
   String image = "";
   String actionType = "";
   String message = "";
+  String dateCreated = "";
+  String startDate = "";
+  String endDate = "";
 
   ModuleEvent({
     this.id = "",
     this.title = "",
     this.image = "",
+    this.dateCreated = "",
     this.actionType = "",
     this.message = "",
   });

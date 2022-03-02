@@ -49,129 +49,44 @@ class ApiUrl {
     return getBaseUrl() + "modules/filter_sub_modules/";
   }
 
-  //MARK: password reset
-  String resetPassword() {
-    return getBaseUrl() + "users/reset_password/";
+  //MARK: check module status
+  String checkModuleStatus() {
+    return getBaseUrl() + "modules/check_module_enrolment/";
   }
 
-  //MARK: login
-  String login() {
-    return getBaseUrl() + "users/login/";
+  //MARK: subsribe to module
+  String subscribeToModule() {
+    return getBaseUrl() + "modules/start_module/";
   }
 
-  //MARK: update avatar
-  String updateAvatar() {
-    return getBaseUrl() + "users/update_profile_picture/";
+  //MARK: start sub module
+  String startSubModule() {
+    return getBaseUrl() + "modules/start_sub_module/";
   }
 
-  //MARK: purchased vouchers
-  String purchasedVouchers() {
-    return getBaseUrl() + "vouchers/purchased_vouchers/";
+  //MARK: mark module as complete
+  String markModuleAsComplete() {
+    return getBaseUrl() + "modules/complete_sub_module/";
   }
 
-  //MARK: vouchers
-  String vouchers() {
-    return getBaseUrl() + "vouchers/available_vouchers/";
-  }
-
-  //MARK: merchants
-  String merchants() {
-    return getBaseUrl() + "merchants/approved_merchants/";
-  }
-
-  //MARK: voucher history
-  String voucherHistories() {
-    return getBaseUrl() + "vouchers/purchase_history/";
-  }
-
-  //MARK: wallets
-  String wallets() {
-    return getBaseUrl() + "wallets/";
-  }
-
-  //MARK: verified wallets
-  String verifiedWallets() {
-    return getBaseUrl() + "wallets/verified_wallets/";
-  }
-
-//MARK: verify wallet
-  String verifyWallet(String id) {
-    return getBaseUrl() + "wallets/$id/confirm_wallet_number/";
-  }
-
-  //MARK: verify wallet
-  String deleteWallet(String id) {
-    return getBaseUrl() + "wallets/$id/";
-  }
-
-  //MARK: edit wallet
-  String editWallet(String id) {
-    return getBaseUrl() + "wallets/$id/";
-  }
-
-  //MARK: resend wallet
-  String resendWalletOtp(String id) {
-    return getBaseUrl() + "wallets/$id/resend_wallet_otp/";
-  }
-
-  //MARK: verify recipient
-  String verifyRecipient() {
-    return getBaseUrl() + "users/verify_voucher_recipient/";
-  }
-
-  //MARK: buy voucher
-  String buyVoucher() {
-    return getBaseUrl() + "vouchers/purchase_voucher/";
-  }
-
-  //MARK: trasfer voucher
-  String transferVoucher() {
-    return getBaseUrl() + "vouchers/transfer_voucher/";
-  }
-
-  //MARK: redeem voucher
-  String redeemVoucher() {
-    return getBaseUrl() + "vouchers/redeem_voucher/";
-  }
-
-  //MARK: merchants vouchers
-  String merchantVouchers(String id) {
-    return getBaseUrl() + "merchants/$id/merchant_vouchers/";
-  }
-
-  //MARK: merchants search
-  String merchantSearch() {
-    return getBaseUrl() + "merchants/search_merchants/";
-  }
-
-  //MARK: voucher search
-  String voucherSearch() {
-    return getBaseUrl() + "vouchers/search_available_vouchers/";
-  }
-
-  //MARK: user notification
-  String notification() {
-    return getBaseUrl() + "users/notifications/";
+  //MARK: submit answers
+  String submitQuiz() {
+    return getBaseUrl() + "modules/submit_quiz/";
   }
 
   //MARK: save notification token
   String saveToken() {
-    return getBaseUrl() + "users/save_notification_token/";
+    return getBaseUrl() + "users/update_token/";
   }
 
-  //MARK: number of  unread
-  String numberOfUnread() {
-    return getBaseUrl() + "users/notifications/num_of_unread/";
+  //MARK: leader board
+  String leaderBoard() {
+    return getBaseUrl() + "users_leader_board/";
   }
 
-  //MARK: mark notification as read
-  String markAsRead(String id) {
-    return getBaseUrl() + "users/notifications/$id/mark_as_read/";
-  }
-
-  //MARK: voucher activities
-  String voucherActivities() {
-    return getBaseUrl() + "vouchers/filter_voucher_history/";
+  //MARK: all my feeds
+  String myFeed() {
+    return getBaseUrl() + "feeds/filter_my_feeds/";
   }
 
   //MARK: main website

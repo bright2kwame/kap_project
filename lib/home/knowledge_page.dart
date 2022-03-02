@@ -19,7 +19,9 @@ import 'package:knowledge_access_power/util/progress_indicator_bar.dart';
 class KnowledgePage extends StatefulWidget {
   const KnowledgePage({
     Key? key,
+    required this.user,
   }) : super(key: key);
+  final UserItem user;
 
   @override
   State<KnowledgePage> createState() => _KnowledgePageState();
@@ -32,18 +34,12 @@ class _KnowledgePageState extends State<KnowledgePage> {
   final List<String> _loadedPages = [];
   String _nextUrl = "";
   bool _loadingData = true;
-  UserItem _user = UserItem();
   String _currentCategory = "";
 
   @override
   void initState() {
-    DBOperations().getUser().then((value) {
-      setState(() {
-        _user = value;
-      });
-      _getModuleCategories(ApiUrl().filterModuleCategory());
-      _getModules(ApiUrl().filterModules(), true);
-    });
+    _getModuleCategories(ApiUrl().filterModuleCategory());
+    _getModules(ApiUrl().filterModules(), true);
 
     super.initState();
   }
@@ -51,7 +47,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
   void _getModuleCategories(String url) {
     _loadedPages.add(url);
     Map<String, String> postData = {};
-    ApiService.get(_user.token)
+    ApiService.get(widget.user.token)
         .postData(url, postData)
         .then((value) {
           var statusCode = value["response_code"].toString();
@@ -79,8 +75,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
     Map<String, String> postData = {};
     postData.putIfAbsent("search_text", () => "");
     postData.putIfAbsent("category", () => _currentCategory);
-
-    ApiService.get(_user.token).postData(url, postData).then((value) {
+    ApiService.get(widget.user.token).postData(url, postData).then((value) {
       var statusCode = value["response_code"].toString();
       if (statusCode == "100") {
         var results = value["results"];

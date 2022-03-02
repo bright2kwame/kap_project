@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:knowledge_access_power/model/module_event.dart';
 import 'package:knowledge_access_power/model/study_module.dart';
@@ -17,19 +16,57 @@ class CommonWidget {
             child: Card(
                 elevation: 0.5,
                 child: ListTile(
-                  title: Text(moduleEvent.title),
-                  subtitle: Text(
-                    moduleEvent.message,
+                  title: Text(
+                    moduleEvent.title,
+                    maxLines: 1,
+                    style:
+                        AppTextStyle.normalTextStyle(AppColor.primaryColor, 16),
                   ),
-                  trailing: const Icon(Icons.arrow_forward_ios),
-                  leading: ClipRRect(
-                    child: Image(
-                      image: CachedNetworkImageProvider(moduleEvent.image),
-                      fit: BoxFit.cover,
-                      width: 80,
-                      height: 80,
+                  subtitle: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 4,
+                        ),
+                        child: Text(
+                          moduleEvent.message,
+                          maxLines: 3,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          moduleEvent.dateCreated,
+                          maxLines: 1,
+                          style: AppTextStyle.normalTextStyle(Colors.grey, 10),
+                        ),
+                      )
+                    ],
+                  ),
+                  trailing: const Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                  ),
+                  leading: SizedBox(
+                    width: 80,
+                    height: 80,
+                    child: ClipRRect(
+                      child: moduleEvent.image.isEmpty
+                          ? const Icon(
+                              Icons.abc,
+                              size: 80,
+                            )
+                          : Image(
+                              image:
+                                  CachedNetworkImageProvider(moduleEvent.image),
+                              fit: BoxFit.cover,
+                              width: 80,
+                              height: 80,
+                            ),
+                      borderRadius: const BorderRadius.all(Radius.circular(5)),
                     ),
-                    borderRadius: const BorderRadius.all(Radius.circular(5)),
                   ),
                 ))));
   }
@@ -48,12 +85,15 @@ class CommonWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image(
-                  image: CachedNetworkImageProvider(studyModule.coverImage),
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: 150,
-                ),
+                studyModule.coverImage.isEmpty
+                    ? Container()
+                    : Image(
+                        image:
+                            CachedNetworkImageProvider(studyModule.coverImage),
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: 150,
+                      ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                       vertical: 8.0, horizontal: 16.0),

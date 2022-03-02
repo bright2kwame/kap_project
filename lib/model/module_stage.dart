@@ -8,6 +8,7 @@ class ModuleStage {
   String contentVideo = "";
   String noOfParticipants = "";
   bool hasCompleted = false;
+  String moduleId = "";
 
   ModuleStage(
       {this.id = "",
@@ -16,6 +17,7 @@ class ModuleStage {
       this.image = "",
       this.content = "",
       this.contentVideo = "",
+      this.moduleId = "",
       this.hasCompleted = false});
 
   ModuleStage.empty();

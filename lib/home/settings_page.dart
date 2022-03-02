@@ -8,6 +8,7 @@ import 'package:knowledge_access_power/onboard/tutorial_page.dart';
 import 'package:knowledge_access_power/resources/image_resource.dart';
 import 'package:knowledge_access_power/resources/string_resource.dart';
 import 'package:knowledge_access_power/popup/app_alert_dialog.dart';
+import 'package:knowledge_access_power/settings/leader_board_page.dart';
 import 'package:knowledge_access_power/sub_module/my_modules_page.dart';
 import 'package:knowledge_access_power/util/app_button_style.dart';
 import 'package:knowledge_access_power/util/app_color.dart';
@@ -18,29 +19,15 @@ import 'package:url_launcher/url_launcher.dart';
 class SettingsPage extends StatefulWidget {
   const SettingsPage({
     Key? key,
+    required this.user,
   }) : super(key: key);
+  final UserItem user;
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  UserItem user = new UserItem();
-
-  @override
-  void initState() {
-    _updateUser();
-    super.initState();
-  }
-
-  void _updateUser() {
-    DBOperations().getUser().then((value) {
-      setState(() {
-        user = value;
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -49,7 +36,7 @@ class _SettingsPageState extends State<SettingsPage> {
             child: Column(
           children: [
             SizedBox(
-              height: 270,
+              height: 255,
               width: MediaQuery.of(context).size.width,
               child: Column(
                 children: [
@@ -66,7 +53,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             onTap: () {
                               _navigateToEditProfileScreen();
                             },
-                            child: user.avatar.isEmpty
+                            child: widget.user.avatar.isEmpty
                                 ? Image.asset(
                                     ImageResource.appLogo,
                                     fit: BoxFit.scaleDown,
@@ -74,8 +61,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                     height: 100,
                                   )
                                 : Image(
-                                    image:
-                                        CachedNetworkImageProvider(user.avatar),
+                                    image: CachedNetworkImageProvider(
+                                        widget.user.avatar),
                                     fit: BoxFit.cover,
                                     width: 90,
                                     height: 90,
@@ -86,60 +73,65 @@ class _SettingsPageState extends State<SettingsPage> {
                   Padding(
                     padding: const EdgeInsets.all(4),
                     child: Text(
-                      user.fullName,
+                      widget.user.fullName,
                       style: AppTextStyle.semiBoldTextStyle(Colors.black, 16.0),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(4),
                     child: Text(
-                      user.email,
+                      widget.user.email,
                       style: AppTextStyle.normalTextStyle(Colors.black, 12.0),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(2),
                     child: Text(
-                      "username  • " + user.username,
+                      "username  • " + widget.user.username,
                       style: AppTextStyle.normalTextStyle(Colors.black, 12.0),
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Icon(
-                          Icons.badge_outlined,
-                          size: 20,
-                          color: AppColor.primaryDarkColor,
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Icon(
+                            Icons.badge_outlined,
+                            size: 20,
+                            color: AppColor.primaryDarkColor,
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Text(
-                          "${user.points} POINTS",
-                          style: AppTextStyle.boldTextStyle(
-                              AppColor.primaryDarkColor, 12.0),
+                        Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Text(
+                            "${widget.user.points} POINTS",
+                            style: AppTextStyle.boldTextStyle(
+                                AppColor.primaryDarkColor, 14.0),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                  TextButton(
-                    style: AppButtonStyle.roundedColoredEdgeButton,
-                    child: Container(
-                        width: 150,
-                        height: 20,
-                        color: AppColor.primaryColor,
-                        child: Text(
-                          "Withdraw Points",
-                          textAlign: TextAlign.center,
-                          style:
-                              AppTextStyle.normalTextStyle(Colors.white, 16.0),
-                        )),
-                    onPressed: () {
-                      shareToSocialMedia();
-                    },
+                  SizedBox(
+                    height: 30,
+                    child: TextButton(
+                      style: AppButtonStyle.squaredSmallColoredEdgeButton,
+                      child: Container(
+                          color: AppColor.primaryColor,
+                          child: Text(
+                            "Withdraw Points",
+                            textAlign: TextAlign.center,
+                            style: AppTextStyle.normalTextStyle(
+                                Colors.white, 12.0),
+                          )),
+                      onPressed: () {
+                        shareToSocialMedia();
+                      },
+                    ),
                   )
                 ],
               ),
@@ -182,7 +174,9 @@ class _SettingsPageState extends State<SettingsPage> {
                       CupertinoIcons.doc_on_doc_fill,
                       Colors.cyan,
                       false),
-                  onTap: () {},
+                  onTap: () {
+                    _navigateToLeadersScreen();
+                  },
                 ),
                 GestureDetector(
                   child: _settingsCard("Help &  Support", "get help for somtin",
@@ -224,8 +218,9 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> shareToSocialMedia() async {
-    await Share.share(StringResource.shareMessageBody(user.firstName, ""),
-        subject: StringResource.shareMessageTitle(user.firstName));
+    await Share.share(
+        StringResource.shareMessageBody(widget.user.firstName, ""),
+        subject: StringResource.shareMessageTitle(widget.user.firstName));
   }
 
   void _navigateToModulesScreen() {
@@ -246,10 +241,15 @@ class _SettingsPageState extends State<SettingsPage> {
     // });
   }
 
+  void _navigateToLeadersScreen() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const LeaderBoardPage()));
+  }
+
   void _showConfirmation() {
     AppAlertDialog().showAlertDialog(
         context, "Logout", "Proceed to logout of KAP", () async {
-      await DBOperations().deleteUser(user.id);
+      await DBOperations().deleteUser(widget.user.id);
       _navigateHome();
     });
   }
