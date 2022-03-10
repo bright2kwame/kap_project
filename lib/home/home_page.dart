@@ -6,6 +6,7 @@ import 'package:knowledge_access_power/common/common_widget.dart';
 import 'package:knowledge_access_power/model/module_event.dart';
 import 'package:knowledge_access_power/model/user.dart';
 import 'package:knowledge_access_power/util/app_color.dart';
+import 'package:knowledge_access_power/util/app_enum.dart';
 import 'package:knowledge_access_power/util/progress_indicator_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -34,9 +35,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _getFeed(String url, bool isRefresh) {
-    setState(() {
-      _loadingData = true;
-    });
     _loadedPages.add(url);
     Map<String, String> data = {};
     ApiService.get(widget.user.token).postData(url, data).then((value) {
@@ -89,13 +87,18 @@ class _HomePageState extends State<HomePage> {
             !_loadedPages.contains(_nextUrl)) {
           _getFeed(_nextUrl, false);
         }
-        var studyModule = _moduleEvents[i];
+        var eventModule = _moduleEvents[i];
         return GestureDetector(
           onTap: () {},
-          child: CommonWidget().moduleEvent(
-            context,
-            studyModule,
-          ),
+          child: eventModule.actionType == HomeFeedType.QUIZ.name
+              ? CommonWidget().moduleEvent(
+                  context,
+                  eventModule,
+                )
+              : CommonWidget().eventFeedView(
+                  context,
+                  eventModule,
+                ),
         );
       },
     );

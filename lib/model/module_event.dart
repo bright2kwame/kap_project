@@ -8,14 +8,15 @@ class ModuleEvent {
   String startDate = "";
   String endDate = "";
 
-  ModuleEvent({
-    this.id = "",
-    this.title = "",
-    this.image = "",
-    this.dateCreated = "",
-    this.actionType = "",
-    this.message = "",
-  });
+  ModuleEvent(
+      {this.id = "",
+      this.title = "",
+      this.image = "",
+      this.dateCreated = "",
+      this.actionType = "",
+      this.message = "",
+      this.startDate = "",
+      this.endDate = ""});
 
   ModuleEvent.empty();
   // Convert a ModuleOptions into a Map. The keys must correspond to the names of the

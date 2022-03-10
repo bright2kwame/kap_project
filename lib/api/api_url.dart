@@ -81,12 +81,17 @@ class ApiUrl {
 
   //MARK: leader board
   String leaderBoard() {
-    return getBaseUrl() + "users_leader_board/";
+    return getBaseUrl() + "users/leader_board/";
   }
 
   //MARK: all my feeds
   String myFeed() {
     return getBaseUrl() + "feeds/filter_my_feeds/";
+  }
+
+  //MARK: update
+  String updatePoint() {
+    return getBaseUrl() + "users/update_point/";
   }
 
   //MARK: main website

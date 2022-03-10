@@ -72,6 +72,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
       if (reload) {
         _getFirebaseToken();
         _getUserProfile();
+        _updatePoint();
       }
     });
   }
@@ -101,6 +102,15 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
     data.putIfAbsent("request_source", () => ManagePlatform().getChannelName());
     ApiService.get(_user.token)
         .postData(ApiUrl().saveToken(), data)
+        .then((result) {})
+        .onError((error, stackTrace) => null);
+  }
+
+  void _updatePoint() {
+    Map<String, String> data = {};
+    data.putIfAbsent("request_source", () => ManagePlatform().getChannelName());
+    ApiService.get(_user.token)
+        .postData(ApiUrl().updatePoint(), data)
         .then((result) {})
         .onError((error, stackTrace) => null);
   }

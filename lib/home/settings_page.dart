@@ -139,13 +139,6 @@ class _SettingsPageState extends State<SettingsPage> {
             Column(
               children: [
                 GestureDetector(
-                  onTap: () {
-                    _navigateToEditProfileScreen();
-                  },
-                  child: _settingsCard("My Profile", "change profile settings",
-                      CupertinoIcons.profile_circled, Colors.amber, false),
-                ),
-                GestureDetector(
                   child: _settingsCard(
                       "Modules Completed",
                       "all modules you have completed",
@@ -179,7 +172,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   },
                 ),
                 GestureDetector(
-                  child: _settingsCard("Help &  Support", "get help for somtin",
+                  child: _settingsCard("Help &  Support", "get help for KAP",
                       CupertinoIcons.phone_circle, Colors.blue, false),
                   onTap: () {
                     _contactSupport();
@@ -188,7 +181,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 GestureDetector(
                   child: _settingsCard(
                       "Privacy & Terms",
-                      "somtin somtin privacy",
+                      "KAP privacy and policy",
                       CupertinoIcons.eye_slash,
                       Colors.red,
                       false),

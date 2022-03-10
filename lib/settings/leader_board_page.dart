@@ -1,13 +1,12 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:knowledge_access_power/api/api_service.dart';
 import 'package:knowledge_access_power/api/api_url.dart';
 import 'package:knowledge_access_power/api/parse_data.dart';
+import 'package:knowledge_access_power/common/common_widget.dart';
 import 'package:knowledge_access_power/model/db_operations.dart';
 import 'package:knowledge_access_power/model/user.dart';
 import 'package:knowledge_access_power/util/app_bar_widget.dart';
 import 'package:knowledge_access_power/util/app_color.dart';
-import 'package:knowledge_access_power/util/app_text_style.dart';
 import 'package:knowledge_access_power/util/progress_indicator_bar.dart';
 
 class LeaderBoardPage extends StatefulWidget {
@@ -39,19 +38,15 @@ class _LeaderBoardPageState extends State<LeaderBoardPage> {
   }
 
   void _getBoard(String url, bool isRefresh) {
-    setState(() {
-      _loadingData = true;
-    });
     _loadedPages.add(url);
     ApiService.get(_user.token).getData(url).then((value) {
       var statusCode = value["response_code"].toString();
       if (statusCode == "100") {
-        var results = value["results"];
         _nextUrl = ParseApiData().getJsonData(value, "next");
         if (isRefresh) {
           _users.clear();
         }
-        results.forEach((item) {
+        value["results"].forEach((item) {
           var dataCleaned = ParseApiData().parseUser(item);
           _users.add(dataCleaned);
         });
@@ -69,24 +64,22 @@ class _LeaderBoardPageState extends State<LeaderBoardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: AppColor.bgColor,
-        appBar: AppBarWidget.primaryAppBar("Leader Board"),
-        body: Container(
-          color: AppColor.bgColor,
-          child: SingleChildScrollView(
-            child: Column(children: [
-              _loadingData
-                  ? ProgressIndicatorBar()
-                  : Container(
-                      height: 4,
-                    ),
-              _users.isNotEmpty ? _leaderView(context) : Container()
-            ]),
-          ),
-        ));
+      backgroundColor: AppColor.bgColor,
+      appBar: AppBarWidget.primaryAppBar("Leader Board"),
+      body: SingleChildScrollView(
+        child: Column(children: [
+          _loadingData
+              ? ProgressIndicatorBar()
+              : Container(
+                  height: 4,
+                ),
+          _users.isNotEmpty ? _leaderView(context) : Container()
+        ]),
+      ),
+    );
   }
 
-//MARK: study module view
+//MARK: leader view
   Widget _leaderView(BuildContext buildContext) {
     return ListView.builder(
       shrinkWrap: true,
@@ -97,39 +90,8 @@ class _LeaderBoardPageState extends State<LeaderBoardPage> {
             !_loadedPages.contains(_nextUrl)) {
           _getBoard(_nextUrl, false);
         }
-        var item = _users[i];
-        return _leaderItemView(
-          context,
-          item,
-        );
+        return CommonWidget().leaderBoardItemView(buildContext, _users[i]);
       },
-    );
-  }
-
-  //MARK: leader item
-  Widget _leaderItemView(BuildContext buildContext, UserItem userItem) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      child: ListTile(
-        title: Text(
-          userItem.username,
-          style: AppTextStyle.semiBoldTextStyle(AppColor.primaryColor, 14),
-        ),
-        subtitle: Text(
-          "${userItem.points} Points",
-          style: AppTextStyle.semiBoldTextStyle(Colors.black, 12),
-        ),
-        leading: ClipOval(
-          child: userItem.avatar.isNotEmpty
-              ? Image(
-                  image: CachedNetworkImageProvider(userItem.avatar),
-                  fit: BoxFit.cover,
-                  width: 100,
-                  height: 100,
-                )
-              : Container(),
-        ),
-      ),
     );
   }
 }

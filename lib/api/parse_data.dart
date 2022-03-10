@@ -6,6 +6,7 @@ import 'package:knowledge_access_power/model/module_question.dart';
 import 'package:knowledge_access_power/model/module_stage.dart';
 import 'package:knowledge_access_power/model/study_module.dart';
 import 'package:knowledge_access_power/model/user.dart';
+import 'package:knowledge_access_power/util/app_enum.dart';
 
 class ParseApiData {
 //MARK: parse the user data
@@ -125,12 +126,20 @@ class ParseApiData {
   }
 
   ModuleEvent parseEvent(var result) {
+    print(result);
     String id = result["id"].toString();
     String title = result["title"].toString();
     String date = parseApiDate(result["date_created"].toString());
     String description = result["description"].toString();
     String coverPhoto = getJsonData(result, "cover_photo");
     String type = getJsonData(result, "feed_type");
+    String startDate = "";
+    String endDate = "";
+    if (type == HomeFeedType.EVENT.name) {
+      var object = result["object"];
+      startDate = parseApiShortDate(object["start_date"]);
+      endDate = parseApiShortDate(object["end_date"]);
+    }
 
     var moduleEvent = ModuleEvent(
         id: id,
@@ -138,7 +147,9 @@ class ParseApiData {
         message: description,
         image: coverPhoto,
         dateCreated: date,
-        actionType: type);
+        actionType: type,
+        startDate: startDate,
+        endDate: endDate);
     return moduleEvent;
   }
 

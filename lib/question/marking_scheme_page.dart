@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:knowledge_access_power/model/module_options.dart';
 import 'package:knowledge_access_power/model/module_question.dart';
 import 'package:knowledge_access_power/util/app_bar_widget.dart';
-import 'package:knowledge_access_power/util/app_button_style.dart';
 import 'package:knowledge_access_power/util/app_color.dart';
 import 'package:knowledge_access_power/util/app_text_style.dart';
 
@@ -61,7 +61,7 @@ class _MarkingSchemePageState extends State<MarkingSchemePage> {
                     style: AppTextStyle.semiBoldTextStyle(Colors.black, 16),
                   ),
                   Text(
-                    " out of ",
+                    " OUT OF ",
                     textAlign: TextAlign.center,
                     style: AppTextStyle.normalTextStyle(Colors.black, 10),
                   ),
@@ -110,8 +110,9 @@ class _MarkingSchemePageState extends State<MarkingSchemePage> {
                         _handlePrevAction();
                       },
                       icon: const Icon(
-                        Icons.arrow_left,
-                        size: 32,
+                        Icons.arrow_back_ios,
+                        color: Colors.white,
+                        size: 16,
                       )))),
           TextButton(
               onPressed: () {
@@ -130,8 +131,9 @@ class _MarkingSchemePageState extends State<MarkingSchemePage> {
                     _handleNextAction();
                   },
                   icon: const Icon(
-                    Icons.arrow_right,
-                    size: 32,
+                    Icons.arrow_forward_ios,
+                    color: Colors.white,
+                    size: 16,
                   )),
             ),
           )
@@ -201,40 +203,56 @@ class _MarkingSchemePageState extends State<MarkingSchemePage> {
       physics: const NeverScrollableScrollPhysics(),
       children: List<Widget>.generate(_currentQuestion.options.length, (index) {
         ModuleOptions moduleOption = _currentQuestion.options[index];
+        bool isSelectedAnswer =
+            _currentQuestion.selectedOption == moduleOption.id;
         return SizedBox(
-          child: ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(5.0)),
-            child: Card(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                      color: AppColor.secondaryColor,
-                      width: moduleOption.isCorrect ? 5 : 0),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                color: AppColor.primaryColor,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      moduleOption.image.isNotEmpty
-                          ? Image(
-                              image: CachedNetworkImageProvider(
-                                  moduleOption.image),
-                              fit: BoxFit.cover,
-                              width: 100,
-                              height: 100,
-                            )
-                          : Container(),
-                      Text(
-                        moduleOption.label,
-                        style: AppTextStyle.semiBoldTextStyle(Colors.white, 16),
-                      )
-                    ],
+            child: ClipRRect(
+          borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+          child: Stack(
+            children: [
+              Card(
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                        color: AppColor.secondaryColor,
+                        width: moduleOption.isCorrect ? 5 : 0),
+                    borderRadius: BorderRadius.circular(5),
                   ),
-                )),
+                  color: AppColor.primaryColor,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        moduleOption.image.isNotEmpty
+                            ? Image(
+                                image: CachedNetworkImageProvider(
+                                    moduleOption.image),
+                                fit: BoxFit.cover,
+                                width: 100,
+                                height: 100,
+                              )
+                            : Container(),
+                        Text(
+                          moduleOption.label,
+                          style:
+                              AppTextStyle.semiBoldTextStyle(Colors.white, 16),
+                        )
+                      ],
+                    ),
+                  )),
+              Positioned(
+                child: isSelectedAnswer
+                    ? Text(
+                        "YOUR ANSWER",
+                        style: AppTextStyle.normalTextStyle(Colors.white, 8),
+                      )
+                    : Container(),
+                left: 12,
+                top: 12,
+              )
+            ],
           ),
-        );
+        ));
       }),
     );
   }

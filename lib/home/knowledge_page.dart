@@ -74,7 +74,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
     _loadedPages.add(url);
     Map<String, String> postData = {};
     postData.putIfAbsent("search_text", () => "");
-    postData.putIfAbsent("category", () => _currentCategory);
+    postData.putIfAbsent("category_id", () => _currentCategory);
     ApiService.get(widget.user.token).postData(url, postData).then((value) {
       var statusCode = value["response_code"].toString();
       if (statusCode == "100") {

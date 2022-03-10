@@ -19,3 +19,8 @@ enum AnswerResponseType {
   RETRY,
   MARKING_SCHEME,
 }
+
+enum HomeFeedType {
+  EVENT,
+  QUIZ,
+}
