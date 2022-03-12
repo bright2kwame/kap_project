@@ -146,6 +146,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
     return Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
+          centerTitle: true,
           systemOverlayStyle: SystemUiOverlayStyle.light,
           title: Text(_displayTitle,
               style: AppTextStyle.normalTextStyle(Colors.white, 16.0)),

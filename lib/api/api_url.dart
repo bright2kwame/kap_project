@@ -94,6 +94,21 @@ class ApiUrl {
     return getBaseUrl() + "users/update_point/";
   }
 
+  //MARK: event check
+  String eventCheckIn() {
+    return getBaseUrl() + "events/check_in_at_event/";
+  }
+
+  //MARK: event checkins
+  String myCheckIns() {
+    return getBaseUrl() + "events/filter_my_event_checkins/";
+  }
+
+  //MARK: redeem points
+  String redeemPoints() {
+    return getBaseUrl() + "users/redeem_point/";
+  }
+
   //MARK: main website
   String mainDomain() {
     return "https://www.afihc.org/";

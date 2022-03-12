@@ -24,3 +24,9 @@ enum HomeFeedType {
   EVENT,
   QUIZ,
 }
+
+enum FeedActionType {
+  EVENT_SCAN,
+  EVENT_DIRECTION,
+  QUIZ_SHARE,
+}

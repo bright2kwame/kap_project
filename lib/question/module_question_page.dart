@@ -20,7 +20,6 @@ import 'package:knowledge_access_power/util/app_bar_widget.dart';
 import 'package:knowledge_access_power/util/app_button_style.dart';
 import 'package:knowledge_access_power/util/app_color.dart';
 import 'package:knowledge_access_power/util/app_text_style.dart';
-import 'package:knowledge_access_power/util/progress_indicator_bar.dart';
 
 class ModuleQuestionPage extends StatefulWidget {
   const ModuleQuestionPage({

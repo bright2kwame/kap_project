@@ -1,18 +1,25 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_progress_hud/flutter_progress_hud.dart';
+import 'package:knowledge_access_power/api/api_service.dart';
 import 'package:knowledge_access_power/api/api_url.dart';
+import 'package:knowledge_access_power/api/parse_data.dart';
+import 'package:knowledge_access_power/home/home_tab_page.dart';
 import 'package:knowledge_access_power/model/db_operations.dart';
 import 'package:knowledge_access_power/model/user.dart';
 import 'package:knowledge_access_power/onboard/tutorial_page.dart';
 import 'package:knowledge_access_power/resources/image_resource.dart';
 import 'package:knowledge_access_power/resources/string_resource.dart';
 import 'package:knowledge_access_power/popup/app_alert_dialog.dart';
+import 'package:knowledge_access_power/settings/events_check_in_page.dart';
 import 'package:knowledge_access_power/settings/leader_board_page.dart';
 import 'package:knowledge_access_power/sub_module/my_modules_page.dart';
 import 'package:knowledge_access_power/util/app_button_style.dart';
 import 'package:knowledge_access_power/util/app_color.dart';
+import 'package:knowledge_access_power/util/app_input_decorator.dart';
 import 'package:knowledge_access_power/util/app_text_style.dart';
+import 'package:knowledge_access_power/util/app_util.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -28,8 +35,30 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  static const String _defetworkType = "Select Network Type";
+  final _networkTypes = [
+    _defetworkType,
+    "Airtel Tigo",
+    "MTN",
+    "Voodafone",
+  ];
+  final __networkTypeKeys = [_defetworkType, "AIR", "MTN", "VOD"];
+  var _network = _defetworkType;
+  static final TextEditingController _pointsController =
+      TextEditingController();
+  static final TextEditingController _phoneNumberController =
+      TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    return SafeArea(
+        child: ProgressHUD(
+            child: Builder(
+      builder: (context) => _buildMainContent(context),
+    )));
+  }
+
+  Widget _buildMainContent(BuildContext buildContext) {
     return Container(
         color: AppColor.bgColor,
         child: SingleChildScrollView(
@@ -49,24 +78,20 @@ class _SettingsPageState extends State<SettingsPage> {
                           shape: BoxShape.circle,
                           color: Colors.white.withAlpha(100)),
                       child: ClipOval(
-                        child: GestureDetector(
-                            onTap: () {
-                              _navigateToEditProfileScreen();
-                            },
-                            child: widget.user.avatar.isEmpty
-                                ? Image.asset(
-                                    ImageResource.appLogo,
-                                    fit: BoxFit.scaleDown,
-                                    width: 100,
-                                    height: 100,
-                                  )
-                                : Image(
-                                    image: CachedNetworkImageProvider(
-                                        widget.user.avatar),
-                                    fit: BoxFit.cover,
-                                    width: 90,
-                                    height: 90,
-                                  )),
+                        child: widget.user.avatar.isEmpty
+                            ? Image.asset(
+                                ImageResource.appLogo,
+                                fit: BoxFit.scaleDown,
+                                width: 100,
+                                height: 100,
+                              )
+                            : Image(
+                                image: CachedNetworkImageProvider(
+                                    widget.user.avatar),
+                                fit: BoxFit.cover,
+                                width: 90,
+                                height: 90,
+                              ),
                       ),
                     ),
                   ),
@@ -91,31 +116,35 @@ class _SettingsPageState extends State<SettingsPage> {
                       style: AppTextStyle.normalTextStyle(Colors.black, 12.0),
                     ),
                   ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: Icon(
-                            Icons.badge_outlined,
-                            size: 20,
-                            color: AppColor.primaryDarkColor,
-                          ),
+                  GestureDetector(
+                      onTap: () {
+                        _shareToSocialMedia();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 4, horizontal: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Icon(
+                                Icons.badge_outlined,
+                                size: 20,
+                                color: AppColor.primaryDarkColor,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Text(
+                                "${widget.user.points} POINTS",
+                                style: AppTextStyle.boldTextStyle(
+                                    AppColor.primaryDarkColor, 14.0),
+                              ),
+                            ),
+                          ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: Text(
-                            "${widget.user.points} POINTS",
-                            style: AppTextStyle.boldTextStyle(
-                                AppColor.primaryDarkColor, 14.0),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                      )),
                   SizedBox(
                     height: 30,
                     child: TextButton(
@@ -129,7 +158,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 Colors.white, 12.0),
                           )),
                       onPressed: () {
-                        shareToSocialMedia();
+                        _navigateToRedemptionsScreen(buildContext);
                       },
                     ),
                   )
@@ -157,7 +186,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       Colors.brown,
                       false),
                   onTap: () {
-                    _navigateToRedemptionsScreen();
+                    _navigateToRedemptionsScreen(buildContext);
                   },
                 ),
                 GestureDetector(
@@ -169,6 +198,13 @@ class _SettingsPageState extends State<SettingsPage> {
                       false),
                   onTap: () {
                     _navigateToLeadersScreen();
+                  },
+                ),
+                GestureDetector(
+                  child: _settingsCard("My CheckIns", "all events I attended",
+                      CupertinoIcons.time, Colors.black, false),
+                  onTap: () {
+                    _navigateEventCheckInScreen();
                   },
                 ),
                 GestureDetector(
@@ -207,10 +243,10 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> _contactSupport() async {
-    // ManageSupport().sendEmail("KAP Feedback", "Please ...");
+    AppUtil().sendEmail("KAP Feedback", "Please ...");
   }
 
-  Future<void> shareToSocialMedia() async {
+  Future<void> _shareToSocialMedia() async {
     await Share.share(
         StringResource.shareMessageBody(widget.user.firstName, ""),
         subject: StringResource.shareMessageTitle(widget.user.firstName));
@@ -221,17 +257,126 @@ class _SettingsPageState extends State<SettingsPage> {
         .push(MaterialPageRoute(builder: (context) => const MyModulesPage()));
   }
 
-  void _navigateToRedemptionsScreen() {
-    // Navigator.of(context).push(MaterialPageRoute(
-    //     builder: (context) => RedeemingSettingsScreen(this.user)));
+  void _navigateToRedemptionsScreen(BuildContext buildContext) {
+    _showWithdrawalAction(buildContext);
   }
 
-  void _navigateToEditProfileScreen() {
-    // Navigator.of(context)
-    //     .push(MaterialPageRoute(builder: (context) => EditProfileScreen()))
-    //     .then((value) {
-    //   this._updateUser();
-    // });
+  //MARK: start withdrawal action
+  _showWithdrawalAction(BuildContext buildContext) {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        enableDrag: true,
+        isDismissible: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(0.0), topRight: Radius.circular(0.0)),
+        ),
+        context: context,
+        builder: (context) {
+          return SafeArea(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 16, right: 16, left: 16, bottom: 16),
+                child: Text(
+                  "WITHDRAW MY POINT",
+                  textAlign: TextAlign.center,
+                  style: AppTextStyle.normalTextStyle(Colors.black, 14.0),
+                ),
+              ),
+              const Divider(
+                height: 0.5,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 16, right: 16, left: 16, bottom: 0),
+                child: Text(
+                  "Provide information below and proceed to withdraw points. 10 Points is equilvalent to GHS 1.00 Airtime",
+                  textAlign: TextAlign.start,
+                  style: AppTextStyle.normalTextStyle(Colors.black, 12.0),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 16, right: 16, left: 16, bottom: 0),
+                child: TextField(
+                  maxLines: 1,
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.number,
+                  style: AppTextStyle.normalTextStyle(Colors.black, 14.0),
+                  textAlign: TextAlign.left,
+                  controller: _pointsController,
+                  decoration: AppInputDecorator.boxDecorate("Points to redeem"),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 16, right: 16, left: 16, bottom: 0),
+                child: TextField(
+                  maxLines: 1,
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.phone,
+                  style: AppTextStyle.normalTextStyle(Colors.black, 14.0),
+                  textAlign: TextAlign.left,
+                  controller: _phoneNumberController,
+                  decoration:
+                      AppInputDecorator.boxDecorate("Enter phone number"),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 16, right: 16, top: 16, bottom: 16),
+                child: DropdownButton<String>(
+                  value: _network,
+                  isExpanded: true,
+                  hint: const Text('Choose Network'),
+                  items: _networkTypes.map((value) {
+                    return DropdownMenuItem(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _network = value.toString();
+                    });
+                  },
+                ),
+              ),
+              Container(
+                height: 44,
+                width: MediaQuery.of(context).size.width - 32,
+                margin:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _redeemPoint(buildContext);
+                  },
+                  child: Text(
+                    "REDEEM POINT",
+                    style: AppTextStyle.normalTextStyle(Colors.white, 14),
+                  ),
+                  style: AppButtonStyle.squaredSmallColoredEdgeButton,
+                ),
+              ),
+              const SizedBox(
+                height: 4,
+              ),
+            ],
+          ));
+        });
+  }
+
+  void _navigateEventCheckInScreen() {
+    Navigator.of(context)
+        .push(
+            MaterialPageRoute(builder: (context) => const EventsCheckInPage()))
+        .then((value) {});
   }
 
   void _navigateToLeadersScreen() {
@@ -252,6 +397,16 @@ class _SettingsPageState extends State<SettingsPage> {
       context,
       MaterialPageRoute<dynamic>(
         builder: (BuildContext context) => const TutorialPage(),
+      ),
+      (route) => false,
+    );
+  }
+
+  void _refreshPage() {
+    Navigator.pushAndRemoveUntil<dynamic>(
+      context,
+      MaterialPageRoute<dynamic>(
+        builder: (BuildContext context) => const HomeTabScreen(),
       ),
       (route) => false,
     );
@@ -306,5 +461,46 @@ class _SettingsPageState extends State<SettingsPage> {
                     : null),
           ),
         ));
+  }
+
+  //MARK: check  user in
+  void _redeemPoint(BuildContext buildContext) async {
+    var number = _phoneNumberController.text.toString().trim();
+    var points = _pointsController.text.toString().trim();
+    var mobileNetwork = __networkTypeKeys[_networkTypes.indexOf(_network)];
+
+    String title = "KAP Point Redemption";
+    if (number.isEmpty || points.isEmpty || mobileNetwork.isEmpty) {
+      AppAlertDialog().showAlertDialog(
+          context, title, "Provide information and proceed", () {});
+      return;
+    }
+    final progress = ProgressHUD.of(buildContext);
+    progress?.show();
+    Map<String, String> data = {};
+    data.putIfAbsent("point", () => points);
+    data.putIfAbsent("phone_number", () => number);
+    data.putIfAbsent("mobile_network", () => mobileNetwork);
+
+    ApiService.get(widget.user.token)
+        .postData(ApiUrl().redeemPoints(), data)
+        .then((value) async {
+      var statusCode = value["response_code"].toString();
+      if (statusCode == "100") {
+        var message = value["message"].toString();
+        var userData = ParseApiData().parseUser(value["results"]);
+        await DBOperations().updateUser(userData);
+        AppAlertDialog().showAlertDialog(context, title, message, () {
+          _refreshPage();
+        });
+      } else {
+        var message = value["detail"].toString();
+        AppAlertDialog().showAlertDialog(context, title, message, () {});
+      }
+    }).whenComplete(() {
+      progress?.dismiss();
+    }).onError((error, stackTrace) {
+      print(error);
+    });
   }
 }

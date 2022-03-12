@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:knowledge_access_power/model/module_event.dart';
 import 'package:knowledge_access_power/resources/image_resource.dart';
 import 'package:knowledge_access_power/util/app_button_style.dart';
 import 'package:knowledge_access_power/util/app_color.dart';
@@ -8,6 +8,7 @@ import 'package:knowledge_access_power/util/app_text_style.dart';
 
 class BottomSheetPage {
   var bottomRadiusCorner = 0.0;
+
 //MARK: start main options
   showModuleExamsResult(BuildContext context, String score, String message,
       Function(String result) callback) {
@@ -114,6 +115,78 @@ class BottomSheetPage {
                       ))
                 ],
               )
+            ],
+          ));
+        });
+  }
+
+  showEventAction(
+      BuildContext context, ModuleEvent moduleEvent, Function callback) {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        enableDrag: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(bottomRadiusCorner),
+              topRight: Radius.circular(bottomRadiusCorner)),
+        ),
+        context: context,
+        builder: (context) {
+          return SafeArea(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 16, right: 16, left: 16, bottom: 16),
+                child: Text(
+                  moduleEvent.title.toUpperCase(),
+                  textAlign: TextAlign.center,
+                  style: AppTextStyle.normalTextStyle(Colors.black, 14.0),
+                ),
+              ),
+              const Divider(
+                height: 0.5,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 8, right: 16, left: 16, bottom: 0),
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.directions,
+                    size: 32,
+                  ),
+                  subtitle: const Text("get map direction to event location"),
+                  title: const Text("Get Direction"),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    callback(FeedActionType.EVENT_DIRECTION.name);
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 8, right: 16, left: 16, bottom: 0),
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.event,
+                    size: 32,
+                  ),
+                  subtitle:
+                      const Text("scan the QR at the premise to check in"),
+                  title: const Text("Check In to this event"),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    callback(FeedActionType.EVENT_SCAN.name);
+                  },
+                ),
+              ),
+              const SizedBox(
+                height: 4,
+              ),
             ],
           ));
         });

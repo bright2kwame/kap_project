@@ -126,7 +126,6 @@ class ParseApiData {
   }
 
   ModuleEvent parseEvent(var result) {
-    print(result);
     String id = result["id"].toString();
     String title = result["title"].toString();
     String date = parseApiDate(result["date_created"].toString());
@@ -135,8 +134,12 @@ class ParseApiData {
     String type = getJsonData(result, "feed_type");
     String startDate = "";
     String endDate = "";
+    String latitude = "";
+    String longitude = "";
     if (type == HomeFeedType.EVENT.name) {
       var object = result["object"];
+      latitude = getJsonData(object, "latitude");
+      longitude = getJsonData(object, "longitude");
       startDate = parseApiShortDate(object["start_date"]);
       endDate = parseApiShortDate(object["end_date"]);
     }
@@ -149,6 +152,8 @@ class ParseApiData {
         dateCreated: date,
         actionType: type,
         startDate: startDate,
+        latitude: latitude,
+        longitude: longitude,
         endDate: endDate);
     return moduleEvent;
   }

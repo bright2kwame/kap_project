@@ -7,6 +7,8 @@ class ModuleEvent {
   String dateCreated = "";
   String startDate = "";
   String endDate = "";
+  String longitude = "";
+  String latitude = "";
 
   ModuleEvent(
       {this.id = "",
@@ -16,6 +18,8 @@ class ModuleEvent {
       this.actionType = "",
       this.message = "",
       this.startDate = "",
+      this.latitude = "",
+      this.longitude = "",
       this.endDate = ""});
 
   ModuleEvent.empty();

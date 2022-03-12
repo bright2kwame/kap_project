@@ -6,7 +6,6 @@ import 'package:knowledge_access_power/model/study_module.dart';
 import 'package:knowledge_access_power/model/user.dart';
 import 'package:knowledge_access_power/util/app_color.dart';
 import 'package:knowledge_access_power/util/app_text_style.dart';
-import 'package:knowledge_access_power/util/app_util.dart';
 
 class CommonWidget {
 //MARK: event module item view
@@ -19,9 +18,6 @@ class CommonWidget {
             child: Card(
                 elevation: 0.5,
                 child: ListTile(
-                  onTap: () {
-                    AppUtil().shareToSocialMedia("title", "message");
-                  },
                   title: Text(
                     moduleEvent.title,
                     maxLines: 1,
@@ -222,7 +218,8 @@ class CommonWidget {
     );
   }
 
-  Widget eventFeedView(BuildContext buildContext, ModuleEvent moduleEvent) {
+  Widget eventFeedView(
+      BuildContext buildContext, ModuleEvent moduleEvent, bool hasMore) {
     return Container(
       color: Colors.white,
       child: ClipRRect(
@@ -230,7 +227,7 @@ class CommonWidget {
         child: Card(
             elevation: 0.5,
             child: SizedBox(
-                height: 120,
+                height: 180,
                 child: Stack(
                   children: [
                     ClipRRect(
@@ -239,13 +236,13 @@ class CommonWidget {
                         image: CachedNetworkImageProvider(moduleEvent.image),
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        height: 120,
+                        height: 180,
                       ),
                     ),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(5.0),
                       child: Container(
-                        height: 120,
+                        height: 180,
                         color: Colors.black.withAlpha(100),
                       ),
                     ),
@@ -279,14 +276,16 @@ class CommonWidget {
                               style: AppTextStyle.normalTextStyle(
                                   Colors.white, 10),
                             ),
-                            const Padding(
-                              padding: EdgeInsets.all(2),
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.white,
-                                size: 16,
-                              ),
-                            )
+                            hasMore
+                                ? const Padding(
+                                    padding: EdgeInsets.all(2),
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
+                                  )
+                                : Container()
                           ],
                         ))
                   ],
