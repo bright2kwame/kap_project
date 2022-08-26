@@ -40,7 +40,7 @@ class _SettingsPageState extends State<SettingsPage> {
     _defetworkType,
     "Airtel Tigo",
     "MTN",
-    "Voodafone",
+    "Vodafone",
   ];
   final __networkTypeKeys = [_defetworkType, "AIR", "MTN", "VOD"];
   var _network = _defetworkType;
@@ -295,7 +295,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 padding: const EdgeInsets.only(
                     top: 16, right: 16, left: 16, bottom: 0),
                 child: Text(
-                  "Provide information below and proceed to withdraw points. 10 Points is equilvalent to GHS 1.00 Airtime",
+                  "Provide information below and proceed to withdraw points.",
                   textAlign: TextAlign.start,
                   style: AppTextStyle.normalTextStyle(Colors.black, 12.0),
                 ),

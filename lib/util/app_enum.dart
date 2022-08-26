@@ -29,4 +29,10 @@ enum FeedActionType {
   EVENT_SCAN,
   EVENT_DIRECTION,
   QUIZ_SHARE,
+  KIT_SHOP_DIRECTION,
+  BUY_KIT,
+}
+
+enum PaymentType {
+  CASH, MOMO, CARD, MTN, VOD, AIR
 }

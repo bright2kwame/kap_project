@@ -14,6 +14,7 @@ import 'package:knowledge_access_power/popup/app_alert_dialog.dart';
 import 'package:knowledge_access_power/util/app_color.dart';
 import 'package:knowledge_access_power/util/app_text_style.dart';
 import 'package:knowledge_access_power/util/manage_platform.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeTabScreen extends StatefulWidget {
   const HomeTabScreen({Key? key}) : super(key: key);

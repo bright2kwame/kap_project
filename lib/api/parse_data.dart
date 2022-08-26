@@ -5,6 +5,7 @@ import 'package:knowledge_access_power/model/module_options.dart';
 import 'package:knowledge_access_power/model/module_question.dart';
 import 'package:knowledge_access_power/model/module_stage.dart';
 import 'package:knowledge_access_power/model/study_module.dart';
+import 'package:knowledge_access_power/model/module_reproductive_kit.dart';
 import 'package:knowledge_access_power/model/user.dart';
 import 'package:knowledge_access_power/util/app_enum.dart';
 
@@ -54,6 +55,34 @@ class ParseApiData {
         noOfStages: noOfSteps,
         noOfParticipants: noOfParticipants);
     return studyModule;
+  }
+  
+  //MARK: the sales kit section
+  ReproductiveKitModule parseKit(var result) {
+    String id = result["id"].toString();
+    String title = result["name"].toString();
+    String summary = result["description"].toString();
+    String amount = result["price"].toString();
+    String image = getJsonData(result, "image");
+    String currency = "GHS";
+    String shopName = getJsonData(result["shop"], "business_name");
+    String shopImage = getJsonData(result["shop"], "shop_logo");
+    String latitude = getJsonData(result["shop"], "latitude").toString();
+    String longitude = getJsonData(result["shop"], "longitude").toString();
+
+    var kitModule = ReproductiveKitModule(
+        id: id,
+        title: title,
+        description: summary,
+        image: image,
+        currency: currency,
+        shopLocation: shopName,
+        amount: amount,
+        shopLat: latitude,
+        shopLon: longitude,
+        shopImage: shopImage,
+        shopName: shopName);
+    return kitModule;
   }
 
   ModuleStage parseModuleStage(var result) {

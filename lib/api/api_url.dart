@@ -118,4 +118,19 @@ class ApiUrl {
   String privacyDomain() {
     return "https://www.afihc.org/";
   }
+
+   //MARK: filter shops
+  String filterShops() {
+    return getBaseUrl() + "marketplace/filter_shops/";
+  }
+
+  //MARK: filter products
+  String filterProducts() {
+    return getBaseUrl() + "marketplace/filter_products/";
+  }
+
+  //MARK: make order
+  String placeOrder() {
+    return getBaseUrl() + "marketplace/place_order/";
+  }
 }

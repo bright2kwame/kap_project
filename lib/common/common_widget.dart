@@ -6,8 +6,60 @@ import 'package:knowledge_access_power/model/study_module.dart';
 import 'package:knowledge_access_power/model/user.dart';
 import 'package:knowledge_access_power/util/app_color.dart';
 import 'package:knowledge_access_power/util/app_text_style.dart';
+import 'package:knowledge_access_power/model/module_reproductive_kit.dart';
 
 class CommonWidget {
+
+  //MARK: reproductive kit module item view
+  Widget moduleReproductiveKit(BuildContext buildContext, ReproductiveKitModule reproductiveKitModule, Function() callback) {
+    return Container(
+        color: Colors.white,
+        width: 250,
+        height: 120,
+        child: ClipRRect(
+            borderRadius: BorderRadius.circular(2.0),
+            child: Card(
+                elevation: 0.5,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                   ClipRRect(
+                            borderRadius: BorderRadius.circular(2.0),
+                            child: Image(image: CachedNetworkImageProvider(reproductiveKitModule.image),
+                                              fit: BoxFit.cover,
+                                              width: double.infinity,
+                                              height: 100,
+                                            )),
+                    Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          reproductiveKitModule.title,
+                          maxLines: 2,
+                        ),
+                      ),
+                      Expanded(child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                        Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text("${reproductiveKitModule.currency} ${reproductiveKitModule.amount}",maxLines: 1)),
+                         Expanded(child: Container()),
+                         GestureDetector(
+                            onTap: () {
+                                callback(); 
+                            },
+                            child: Padding(padding: const EdgeInsets.only(right: 8.0), child: Text(
+                              "Buy",
+                              style: TextStyle(color: Colors.blue),
+                            )
+                            ),
+                          )
+                      ],))
+                       
+                ]))));
+  }
 //MARK: event module item view
   Widget moduleEvent(BuildContext buildContext, ModuleEvent moduleEvent) {
     return Container(

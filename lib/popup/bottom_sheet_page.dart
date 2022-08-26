@@ -5,6 +5,8 @@ import 'package:knowledge_access_power/util/app_button_style.dart';
 import 'package:knowledge_access_power/util/app_color.dart';
 import 'package:knowledge_access_power/util/app_enum.dart';
 import 'package:knowledge_access_power/util/app_text_style.dart';
+import 'package:knowledge_access_power/model/module_reproductive_kit.dart';
+
 
 class BottomSheetPage {
   var bottomRadiusCorner = 0.0;
@@ -181,6 +183,78 @@ class BottomSheetPage {
                   onTap: () {
                     Navigator.of(context).pop();
                     callback(FeedActionType.EVENT_SCAN.name);
+                  },
+                ),
+              ),
+              const SizedBox(
+                height: 4,
+              ),
+            ],
+          ));
+        });
+  }
+
+   showBuyingAction(
+      BuildContext context, ReproductiveKitModule reproductiveKitModule, Function callback) {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        enableDrag: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(bottomRadiusCorner),
+              topRight: Radius.circular(bottomRadiusCorner)),
+        ),
+        context: context,
+        builder: (context) {
+          return SafeArea(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 16, right: 16, left: 16, bottom: 16),
+                child: Text(
+                  reproductiveKitModule.title.toUpperCase(),
+                  textAlign: TextAlign.center,
+                  style: AppTextStyle.normalTextStyle(Colors.black, 14.0),
+                ),
+              ),
+              const Divider(
+                height: 0.5,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 8, right: 16, left: 16, bottom: 0),
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.credit_card,
+                    size: 32,
+                  ),
+                  subtitle: const Text("buy this item and make payment"),
+                  title: const Text("Purchase Item"),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    callback(FeedActionType.BUY_KIT.name);
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 8, right: 16, left: 16, bottom: 0),
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.directions,
+                    size: 32,
+                  ),
+                  subtitle:
+                      const Text("get the direction to shop"),
+                  title: const Text("Get direction"),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    callback(FeedActionType.KIT_SHOP_DIRECTION.name);
                   },
                 ),
               ),
