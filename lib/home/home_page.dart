@@ -48,9 +48,7 @@ class _HomePageState extends State<HomePage> {
   var _network = _defetworkType;
   static final TextEditingController _quantityController =
       TextEditingController();
-  static final TextEditingController _phoneController =
-      TextEditingController();
-  
+  static final TextEditingController _phoneController = TextEditingController();
 
   @override
   void initState() {
@@ -59,27 +57,30 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
- //MARK: get kit data
+  //MARK: get kit data
   void _getKitsFeed(String url, bool isRefresh) {
     _loadedPages.add(url);
     Map<String, String> data = {};
-    ApiService.get(widget.user.token).postData(url, data).then((value) {
-      var statusCode = value["response_code"].toString();
-      if (statusCode == "100") {
-        _nextUrl = ParseApiData().getJsonData(value, "next");
-        if (isRefresh) {
-          _moduleReproductiveKits.clear();
-        }
-        value["results"].forEach((item) {
-          var dataCleaned = ParseApiData().parseKit(item);
-          _moduleReproductiveKits.add(dataCleaned);
+    ApiService.get(widget.user.token)
+        .postData(url, data)
+        .then((value) {
+          var statusCode = value["response_code"].toString();
+          if (statusCode == "100") {
+            _nextUrl = ParseApiData().getJsonData(value, "next");
+            if (isRefresh) {
+              _moduleReproductiveKits.clear();
+            }
+            value["results"].forEach((item) {
+              var dataCleaned = ParseApiData().parseKit(item);
+              _moduleReproductiveKits.add(dataCleaned);
+            });
+            setState(() {});
+          }
+        })
+        .whenComplete(() {})
+        .onError((error, stackTrace) {
+          print(error);
         });
-        setState(() {});
-      }
-    }).whenComplete(() {
-    }).onError((error, stackTrace) {
-      print(error);
-    });
   }
 
   void _getFeed(String url, bool isRefresh) {
@@ -118,28 +119,51 @@ class _HomePageState extends State<HomePage> {
               : Container(
                   height: 4,
                 ),
-          Container(child:  _moduleReproductiveProductive(context), height: 170),
+          SizedBox(
+              child: Column(children: [
+                Row(
+                  children: [
+                    const Expanded(
+                        child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 8.0),
+                      child: Text("Available Products"),
+                    )),
+                    TextButton(
+                        onPressed: () {
+                          _navgateToProductsScreen();
+                        },
+                        child: const Text("See All"))
+                  ],
+                ),
+                SizedBox(
+                  height: 170,
+                  child: _moduleReproductiveProductive(context),
+                )
+              ]),
+              height: 220),
           _moduleEvents.isNotEmpty ? _moduleEventView(context) : Container()
         ]),
       ),
     );
   }
 
-  Widget _moduleReproductiveProductive(BuildContext buildContext){
+  Widget _moduleReproductiveProductive(BuildContext buildContext) {
     return ListView.builder(
       scrollDirection: Axis.horizontal,
       itemCount: _moduleReproductiveKits.length,
       itemBuilder: (context, i) {
         var eventKit = _moduleReproductiveKits[i];
-        return CommonWidget().moduleReproductiveKit(buildContext, eventKit, (){
-          BottomSheetPage().showBuyingAction(buildContext, eventKit, (callback){
-              print(callback);
-              if (callback == FeedActionType.BUY_KIT.name){
-                _showBuyingAction(buildContext,eventKit);
-              } else if (callback == FeedActionType.KIT_SHOP_DIRECTION.name){
-                _navgateToDirection(eventKit.shopName, eventKit.shopLat, eventKit.shopLon);
-              }
-          } );
+        return CommonWidget().moduleReproductiveKit(buildContext, eventKit, () {
+          BottomSheetPage().showBuyingAction(buildContext, eventKit,
+              (callback) {
+            if (callback == FeedActionType.BUY_KIT.name) {
+              _showBuyingAction(buildContext, eventKit);
+            } else if (callback == FeedActionType.KIT_SHOP_DIRECTION.name) {
+              _navgateToDirection(
+                  eventKit.shopName, eventKit.shopLat, eventKit.shopLon);
+            }
+          });
         });
       },
     );
@@ -256,27 +280,30 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
-
-  void _buyReproductiveKit(BuildContext context, ReproductiveKitModule kit){
+  void _buyReproductiveKit(BuildContext context, ReproductiveKitModule kit) {
     String quantity = _quantityController.text.toString();
     String phone = _phoneController.text.toString();
-   
-    if (quantity.isEmpty){
-      AppAlertDialog().showAlertDialog(context, "KAP Purchase", "Provide the qunatity of item to buy", () {});
+
+    if (quantity.isEmpty) {
+      AppAlertDialog().showAlertDialog(context, "KAP Purchase",
+          "Provide the qunatity of item to buy", () {});
       return;
     }
-    if (phone.isEmpty){
-      AppAlertDialog().showAlertDialog(context, "KAP Purchase", "Provide a payment phone number", () {});
+    if (phone.isEmpty) {
+      AppAlertDialog().showAlertDialog(
+          context, "KAP Purchase", "Provide a payment phone number", () {});
       return;
     }
 
-    if (_network == _defetworkType){
-      AppAlertDialog().showAlertDialog(context, "KAP Purchase", "Select a network and proceed", () {});
+    if (_network == _defetworkType) {
+      AppAlertDialog().showAlertDialog(
+          context, "KAP Purchase", "Select a network and proceed", () {});
       return;
     }
 
     var mobileNetwork = __networkTypeKeys[_networkTypes.indexOf(_network)];
-    String totalCost = (double.parse(quantity) * double.parse(kit.amount)).toString();  
+    String totalCost =
+        (double.parse(quantity) * double.parse(kit.amount)).toString();
     setState(() {
       _loadingData = true;
     });
@@ -286,7 +313,8 @@ class _HomePageState extends State<HomePage> {
     data.putIfAbsent("discount", () => "0.0");
     data.putIfAbsent("service_charge", () => "0.0");
     data.putIfAbsent("grand_total", () => totalCost);
-    data.putIfAbsent("order_items", () => "${kit.id}:${quantity}:${kit.amount}:${totalCost}");
+    data.putIfAbsent("order_items",
+        () => "${kit.id}:${quantity}:${kit.amount}:${totalCost}");
     data.putIfAbsent("payment_method", () => "MOMO");
     data.putIfAbsent("sender_wallet_number", () => phone);
     data.putIfAbsent("sender_wallet_network", () => mobileNetwork);
@@ -348,20 +376,27 @@ class _HomePageState extends State<HomePage> {
       if (result == FeedActionType.EVENT_SCAN.name) {
         _navgateToQrScreen(moduleEvent);
       } else if (result == FeedActionType.EVENT_DIRECTION.name) {
-        _navgateToDirection(moduleEvent.title, moduleEvent.latitude ,moduleEvent.longitude);
+        _navgateToDirection(
+            moduleEvent.title, moduleEvent.latitude, moduleEvent.longitude);
       }
     });
   }
 
   //MARK: start map  to get direction
-  _navgateToDirection(String title,String lat, String lon) async {
+  _navgateToDirection(String title, String lat, String lon) async {
     final availableMaps = await MapLauncher.installedMaps;
     await availableMaps.first.showMarker(
-      coords: Coords(double.parse(lat),
-          double.parse(lon)),
+      coords: Coords(double.parse(lat), double.parse(lon)),
       title: title,
       description: title,
     );
+  }
+
+  //MARK: start all products page
+  void _navgateToProductsScreen() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const EventCheckInPage()))
+        .then((value) {});
   }
 
 //MARK: start qr code scanner
