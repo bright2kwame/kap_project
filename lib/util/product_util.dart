@@ -63,7 +63,8 @@ class ProductUtil {
     }).whenComplete(() {
       actionCompleted();
     }).onError((error, stackTrace) {
-      print(error);
+      AppAlertDialog()
+          .showAlertDialog(context, kit.title, error.toString(), () {});
     });
   }
 

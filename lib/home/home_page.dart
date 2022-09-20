@@ -126,7 +126,9 @@ class _HomePageState extends State<HomePage> {
                         onPressed: () {
                           _navgateToProductsScreen();
                         },
-                        child: const Text("See All"))
+                        child: Text("SEE ALL",
+                            style: AppTextStyle.normalTextStyle(
+                                Colors.grey, 12.0)))
                   ],
                 ),
                 SizedBox(

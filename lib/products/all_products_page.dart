@@ -26,6 +26,7 @@ class AllProductsPage extends StatefulWidget {
 
 class _AllProductsPageState extends State<AllProductsPage> {
   bool _loadingData = false;
+  final int _nextPageThreshold = 5;
   final List<String> _loadedPages = [];
   String _nextUrl = "";
   final List<ReproductiveKitModule> _moduleReproductiveKits = [];
@@ -110,6 +111,7 @@ class _AllProductsPageState extends State<AllProductsPage> {
     );
   }
 
+  //MARK: ui component
   Widget _buildKitsContainer() {
     return GridView.builder(
       physics: const NeverScrollableScrollPhysics(),
@@ -118,6 +120,9 @@ class _AllProductsPageState extends State<AllProductsPage> {
       gridDelegate:
           const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
       itemBuilder: (BuildContext context, int index) {
+        if (index == _moduleReproductiveKits.length - _nextPageThreshold) {
+          _getKitsFeed(_nextUrl, "", false);
+        }
         var eventKit = _moduleReproductiveKits[index];
         return CommonWidget().moduleReproductiveKit(context, eventKit, () {
           BottomSheetPage().showBuyingAction(context, eventKit, (callback) {
@@ -150,6 +155,7 @@ class _AllProductsPageState extends State<AllProductsPage> {
     );
   }
 
+//MARK: search bar widget
   Widget _searchBar() {
     return Container(
         margin: const EdgeInsets.symmetric(vertical: 1.5, horizontal: 5),

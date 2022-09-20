@@ -1,9 +1,13 @@
 import 'package:knowledge_access_power/model/module_reproductive_kit.dart';
 
+//MARK: an object to hold the order placed by user
 class SalesOrder {
   ReproductiveKitModule reproductiveKitModule;
+  //item quantity
   String quantity;
+  //phone number to make payment
   String paymentPhone;
+  //network to use for the momo
   String paymentNetwork;
   SalesOrder(
       {required this.quantity,
