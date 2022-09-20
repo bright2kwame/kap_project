@@ -111,9 +111,14 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(2),
-                    child: Text(
-                      "username  • " + widget.user.username,
-                      style: AppTextStyle.normalTextStyle(Colors.black, 12.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        showUserNameUpdate(buildContext);
+                      },
+                      child: Text(
+                        "username  • " + widget.user.username,
+                        style: AppTextStyle.normalTextStyle(Colors.blue, 12.0),
+                      ),
                     ),
                   ),
                   GestureDetector(
@@ -240,6 +245,40 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ],
         )));
+  }
+
+  //MARK: present the field to update the username
+  void showUserNameUpdate(BuildContext buildContext) {
+    String title = "Update Username";
+    AppAlertDialog().showUsernameAlertDialog(context, title, (username) {
+      if (!username.isEmpty) {
+        final progress = ProgressHUD.of(buildContext);
+        progress?.show();
+        Map<String, String> data = {};
+        data.putIfAbsent("username", () => username);
+        ApiService.get(widget.user.token)
+            .putData(ApiUrl().myProfile(), data)
+            .then((value) async {
+          var statusCode = value["response_code"].toString();
+          if (statusCode == "100") {
+            var message = value["message"].toString();
+            var userData = ParseApiData().parseUser(value["results"]);
+            await DBOperations().updateUser(userData);
+            AppAlertDialog().showAlertDialog(context, title, message, () {
+              _refreshPage();
+            });
+          } else {
+            var message = value["detail"].toString();
+            AppAlertDialog().showAlertDialog(context, title, message, () {});
+          }
+        }).whenComplete(() {
+          progress?.dismiss();
+        }).onError((error, stackTrace) {
+          AppAlertDialog()
+              .showAlertDialog(context, title, error.toString(), () {});
+        });
+      }
+    });
   }
 
   Future<void> _contactSupport() async {

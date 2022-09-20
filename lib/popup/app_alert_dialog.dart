@@ -108,4 +108,66 @@ class AppAlertDialog {
               ],
             ));
   }
+
+  //MARK: present the dialog for chnaging username
+  showUsernameAlertDialog(
+      BuildContext context, String title, Function callback) {
+    TextEditingController _firstController = TextEditingController();
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => CupertinoAlertDialog(
+              title: Column(
+                children: <Widget>[
+                  Text(
+                    title,
+                    style: AppTextStyle.boldTextStyle(Colors.black, 16.0),
+                  ),
+                ],
+              ),
+              content: Container(
+                padding: const EdgeInsets.only(top: 16, bottom: 16),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2, bottom: 8),
+                      child: Text(
+                        "Enter username in the field provided below",
+                        style: AppTextStyle.normalTextStyle(Colors.black, 14),
+                      ),
+                    ),
+                    CupertinoTextField(
+                      maxLines: 1,
+                      textInputAction: TextInputAction.done,
+                      keyboardType: TextInputType.text,
+                      style: AppTextStyle.normalTextStyle(Colors.black, 16.0),
+                      textAlign: TextAlign.start,
+                      controller: _firstController,
+                      placeholder: "Enter username",
+                      autofocus: false,
+                      obscureText: false,
+                      autocorrect: false,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 8),
+                    )
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                CupertinoDialogAction(
+                  isDestructiveAction: true,
+                  child: const Text("CANCEL"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                CupertinoDialogAction(
+                  child: const Text("DONE"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    callback(_firstController.text.trim());
+                  },
+                ),
+              ],
+            ));
+  }
 }
