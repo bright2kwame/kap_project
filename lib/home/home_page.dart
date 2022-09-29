@@ -15,9 +15,6 @@ import 'package:knowledge_access_power/util/app_enum.dart';
 import 'package:knowledge_access_power/util/app_text_style.dart';
 import 'package:knowledge_access_power/util/app_util.dart';
 import 'package:knowledge_access_power/util/progress_indicator_bar.dart';
-import 'package:map_launcher/map_launcher.dart';
-import 'package:knowledge_access_power/util/app_input_decorator.dart';
-import 'package:knowledge_access_power/util/app_button_style.dart';
 
 import '../util/product_util.dart';
 
@@ -116,11 +113,13 @@ class _HomePageState extends State<HomePage> {
               child: Column(children: [
                 Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                         child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 8.0),
-                      child: Text("Available Products"),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 0.0, horizontal: 8.0),
+                      child: Text("Available Products",
+                          style:
+                              AppTextStyle.normalTextStyle(Colors.grey, 12.0)),
                     )),
                     TextButton(
                         onPressed: () {
@@ -128,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                         },
                         child: Text("SEE ALL",
                             style: AppTextStyle.normalTextStyle(
-                                Colors.grey, 12.0)))
+                                Colors.blue, 12.0)))
                   ],
                 ),
                 SizedBox(

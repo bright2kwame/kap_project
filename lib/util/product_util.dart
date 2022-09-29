@@ -93,108 +93,115 @@ class ProductUtil {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
             return SafeArea(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(
-                      top: 16, right: 16, left: 16, bottom: 16),
-                  child: Text(
-                    "MAKE PAYMENT - ${kit.title}",
-                    textAlign: TextAlign.center,
-                    style: AppTextStyle.normalTextStyle(Colors.black, 14.0),
-                  ),
-                ),
-                const Divider(
-                  height: 0.5,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      top: 16, right: 16, left: 16, bottom: 0),
-                  child: Text(
-                    "Provide information below and proceed to make payment of ${kit.currency} ${kit.amount}",
-                    textAlign: TextAlign.start,
-                    style: AppTextStyle.normalTextStyle(Colors.black, 12.0),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      top: 16, right: 16, left: 16, bottom: 0),
-                  child: TextField(
-                    maxLines: 1,
-                    textInputAction: TextInputAction.next,
-                    keyboardType: TextInputType.number,
-                    style: AppTextStyle.normalTextStyle(Colors.black, 14.0),
-                    textAlign: TextAlign.left,
-                    controller: quantityController,
-                    decoration:
-                        AppInputDecorator.boxDecorate("Quantity to buy"),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      top: 16, right: 16, left: 16, bottom: 0),
-                  child: TextField(
-                    maxLines: 1,
-                    textInputAction: TextInputAction.next,
-                    keyboardType: TextInputType.phone,
-                    style: AppTextStyle.normalTextStyle(Colors.black, 14.0),
-                    textAlign: TextAlign.left,
-                    controller: phoneController,
-                    decoration:
-                        AppInputDecorator.boxDecorate("Enter phone number"),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 16, right: 16, top: 16, bottom: 16),
-                  child: DropdownButton<String>(
-                    value: networkSelected,
-                    isExpanded: true,
-                    hint: const Text('Choose Network'),
-                    items: _networkTypes.map((value) {
-                      return DropdownMenuItem(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        networkSelected = value.toString();
-                        networkValue = networkCodes[
-                            _networkTypes.indexOf(networkSelected)];
-                      });
-                    },
-                  ),
-                ),
-                Container(
-                  height: 44,
-                  width: MediaQuery.of(context).size.width - 32,
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      actionCompleted(SalesOrder(
-                          quantity: quantityController.text,
-                          reproductiveKitModule: kit,
-                          paymentNetwork: networkValue,
-                          paymentPhone: phoneController.text));
-                    },
-                    child: Text(
-                      "MAKE PAYMENT",
-                      style: AppTextStyle.normalTextStyle(Colors.white, 14),
-                    ),
-                    style: AppButtonStyle.squaredSmallColoredEdgeButton,
-                  ),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-              ],
-            ));
+                child: Padding(
+                    padding: MediaQuery.of(context).viewInsets,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 16, right: 16, left: 16, bottom: 16),
+                          child: Text(
+                            "MAKE PAYMENT - ${kit.title}",
+                            textAlign: TextAlign.center,
+                            style: AppTextStyle.normalTextStyle(
+                                Colors.black, 14.0),
+                          ),
+                        ),
+                        const Divider(
+                          height: 0.5,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 16, right: 16, left: 16, bottom: 0),
+                          child: Text(
+                            "Provide information below and proceed to make payment of ${kit.currency} ${kit.amount}",
+                            textAlign: TextAlign.start,
+                            style: AppTextStyle.normalTextStyle(
+                                Colors.black, 12.0),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 16, right: 16, left: 16, bottom: 0),
+                          child: TextField(
+                            maxLines: 1,
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.number,
+                            style: AppTextStyle.normalTextStyle(
+                                Colors.black, 14.0),
+                            textAlign: TextAlign.left,
+                            controller: quantityController,
+                            decoration: AppInputDecorator.boxDecorate(
+                                "Quantity to buy"),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 16, right: 16, left: 16, bottom: 0),
+                          child: TextField(
+                            maxLines: 1,
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.phone,
+                            style: AppTextStyle.normalTextStyle(
+                                Colors.black, 14.0),
+                            textAlign: TextAlign.left,
+                            controller: phoneController,
+                            decoration: AppInputDecorator.boxDecorate(
+                                "Enter phone number"),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 16, right: 16, top: 16, bottom: 16),
+                          child: DropdownButton<String>(
+                            value: networkSelected,
+                            isExpanded: true,
+                            hint: const Text('Choose Network'),
+                            items: _networkTypes.map((value) {
+                              return DropdownMenuItem(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                networkSelected = value.toString();
+                                networkValue = networkCodes[
+                                    _networkTypes.indexOf(networkSelected)];
+                              });
+                            },
+                          ),
+                        ),
+                        Container(
+                          height: 44,
+                          width: MediaQuery.of(context).size.width - 32,
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 16, horizontal: 16),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              actionCompleted(SalesOrder(
+                                  quantity: quantityController.text,
+                                  reproductiveKitModule: kit,
+                                  paymentNetwork: networkValue,
+                                  paymentPhone: phoneController.text));
+                            },
+                            child: Text(
+                              "MAKE PAYMENT",
+                              style: AppTextStyle.normalTextStyle(
+                                  Colors.white, 14),
+                            ),
+                            style: AppButtonStyle.squaredSmallColoredEdgeButton,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 4,
+                        ),
+                      ],
+                    )));
           });
         });
   }

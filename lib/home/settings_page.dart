@@ -312,102 +312,105 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
         context: context,
         builder: (context) {
-          return SafeArea(
-              child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 16, right: 16, left: 16, bottom: 16),
-                child: Text(
-                  "WITHDRAW MY POINT",
-                  textAlign: TextAlign.center,
-                  style: AppTextStyle.normalTextStyle(Colors.black, 14.0),
-                ),
-              ),
-              const Divider(
-                height: 0.5,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 16, right: 16, left: 16, bottom: 0),
-                child: Text(
-                  "Provide information below and proceed to withdraw points.",
-                  textAlign: TextAlign.start,
-                  style: AppTextStyle.normalTextStyle(Colors.black, 12.0),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 16, right: 16, left: 16, bottom: 0),
-                child: TextField(
-                  maxLines: 1,
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.number,
-                  style: AppTextStyle.normalTextStyle(Colors.black, 14.0),
-                  textAlign: TextAlign.left,
-                  controller: _pointsController,
-                  decoration: AppInputDecorator.boxDecorate("Points to redeem"),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 16, right: 16, left: 16, bottom: 0),
-                child: TextField(
-                  maxLines: 1,
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.phone,
-                  style: AppTextStyle.normalTextStyle(Colors.black, 14.0),
-                  textAlign: TextAlign.left,
-                  controller: _phoneNumberController,
-                  decoration:
-                      AppInputDecorator.boxDecorate("Enter phone number"),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 16, right: 16, top: 16, bottom: 16),
-                child: DropdownButton<String>(
-                  value: _network,
-                  isExpanded: true,
-                  hint: const Text('Choose Network'),
-                  items: _networkTypes.map((value) {
-                    return DropdownMenuItem(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _network = value.toString();
-                    });
-                  },
-                ),
-              ),
-              Container(
-                height: 44,
-                width: MediaQuery.of(context).size.width - 32,
-                margin:
-                    const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    _redeemPoint(buildContext);
-                  },
-                  child: Text(
-                    "REDEEM POINT",
-                    style: AppTextStyle.normalTextStyle(Colors.white, 14),
+          return Padding(
+              padding: MediaQuery.of(context).viewInsets,
+              child: SafeArea(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 16, right: 16, left: 16, bottom: 16),
+                    child: Text(
+                      "WITHDRAW MY POINT",
+                      textAlign: TextAlign.center,
+                      style: AppTextStyle.normalTextStyle(Colors.black, 14.0),
+                    ),
                   ),
-                  style: AppButtonStyle.squaredSmallColoredEdgeButton,
-                ),
-              ),
-              const SizedBox(
-                height: 4,
-              ),
-            ],
-          ));
+                  const Divider(
+                    height: 0.5,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 16, right: 16, left: 16, bottom: 0),
+                    child: Text(
+                      "Provide information below and proceed to withdraw points.",
+                      textAlign: TextAlign.start,
+                      style: AppTextStyle.normalTextStyle(Colors.black, 12.0),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 16, right: 16, left: 16, bottom: 0),
+                    child: TextField(
+                      maxLines: 1,
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.number,
+                      style: AppTextStyle.normalTextStyle(Colors.black, 14.0),
+                      textAlign: TextAlign.left,
+                      controller: _pointsController,
+                      decoration:
+                          AppInputDecorator.boxDecorate("Points to redeem"),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 16, right: 16, left: 16, bottom: 0),
+                    child: TextField(
+                      maxLines: 1,
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.phone,
+                      style: AppTextStyle.normalTextStyle(Colors.black, 14.0),
+                      textAlign: TextAlign.left,
+                      controller: _phoneNumberController,
+                      decoration:
+                          AppInputDecorator.boxDecorate("Enter phone number"),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 16, right: 16, top: 16, bottom: 16),
+                    child: DropdownButton<String>(
+                      value: _network,
+                      isExpanded: true,
+                      hint: const Text('Choose Network'),
+                      items: _networkTypes.map((value) {
+                        return DropdownMenuItem(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _network = value.toString();
+                        });
+                      },
+                    ),
+                  ),
+                  Container(
+                    height: 44,
+                    width: MediaQuery.of(context).size.width - 32,
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 16),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _redeemPoint(buildContext);
+                      },
+                      child: Text(
+                        "REDEEM POINT",
+                        style: AppTextStyle.normalTextStyle(Colors.white, 14),
+                      ),
+                      style: AppButtonStyle.squaredSmallColoredEdgeButton,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                ],
+              )));
         });
   }
 
