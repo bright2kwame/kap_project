@@ -38,6 +38,23 @@ class CommonWidget {
                         child: Text(reproductiveKitModule.title, maxLines: 2),
                       ),
                       Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(left: 8),
+                            child: Icon(
+                              Icons.shop,
+                              size: 12,
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 8.0, right: 8.0),
+                            child: Text(reproductiveKitModule.shopName,
+                                maxLines: 1),
+                          ),
+                        ],
+                      ),
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

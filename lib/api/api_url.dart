@@ -119,7 +119,7 @@ class ApiUrl {
     return "https://www.afihc.org/";
   }
 
-   //MARK: filter shops
+  //MARK: filter shops
   String filterShops() {
     return getBaseUrl() + "marketplace/filter_shops/";
   }
@@ -131,6 +131,11 @@ class ApiUrl {
 
   //MARK: make order
   String placeOrder() {
+    return getBaseUrl() + "marketplace/place_order/";
+  }
+
+  //MARK: verify the payment otp
+  String verifyPaymentNumberOrder() {
     return getBaseUrl() + "marketplace/place_order/";
   }
 }

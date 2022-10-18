@@ -6,6 +6,7 @@ import 'package:knowledge_access_power/api/api_url.dart';
 import 'package:knowledge_access_power/api/parse_data.dart';
 import 'package:knowledge_access_power/common/common_widget.dart';
 import 'package:knowledge_access_power/model/db_operations.dart';
+import 'package:knowledge_access_power/model/sales_order.dart';
 import 'package:knowledge_access_power/model/user.dart';
 import 'package:knowledge_access_power/util/app_color.dart';
 import 'package:knowledge_access_power/util/app_text_style.dart';
@@ -138,10 +139,12 @@ class _AllProductsPageState extends State<AllProductsPage> {
                       _user.token,
                       salesOrder.quantity,
                       salesOrder.paymentPhone,
-                      salesOrder.paymentNetwork, () {
+                      salesOrder.paymentNetwork,
+                      salesOrder.payToken, () {
                     setState(() {
                       _loadingData = false;
                     });
+                    startVerificationProcess(context, salesOrder);
                   });
                 }
               });
@@ -153,6 +156,30 @@ class _AllProductsPageState extends State<AllProductsPage> {
         });
       },
     );
+  }
+
+  //MARK: show the ui for the verification process
+  void startVerificationProcess(BuildContext context, SalesOrder salesOrder) {
+    ProductUtil().showBuyingVerifyAction(
+        context, salesOrder, salesOrder.reproductiveKitModule, (otp) {
+      if (otp != "") {
+        setState(() {
+          _loadingData = true;
+        });
+      }
+      ProductUtil().verifyReproductiveKit(
+          context,
+          salesOrder.reproductiveKitModule,
+          _user.token,
+          salesOrder.quantity,
+          salesOrder.paymentPhone,
+          salesOrder.paymentNetwork,
+          otp, () {
+        setState(() {
+          _loadingData = false;
+        });
+      });
+    });
   }
 
 //MARK: search bar widget

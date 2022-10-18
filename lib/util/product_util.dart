@@ -11,13 +11,14 @@ import 'app_text_style.dart';
 
 class ProductUtil {
   //MARK: perform action of buying
-  void buyReproductiveKit(
+  void verifyReproductiveKit(
       BuildContext context,
       ReproductiveKitModule kit,
       String authToken,
       String quantity,
       String phone,
       String mobileNetwork,
+      String otp,
       Function actionCompleted) {
     if (quantity.isEmpty) {
       AppAlertDialog().showAlertDialog(context, "KAP Purchase",
@@ -39,6 +40,67 @@ class ProductUtil {
     String totalCost =
         (double.parse(quantity) * double.parse(kit.amount)).toString();
     Map<String, String> data = {};
+    data.putIfAbsent("otp", () => otp);
+    data.putIfAbsent("currency", () => kit.currency);
+    data.putIfAbsent("total_amount", () => totalCost);
+    data.putIfAbsent("discount", () => "0.0");
+    data.putIfAbsent("service_charge", () => "0.0");
+    data.putIfAbsent("grand_total", () => totalCost);
+    data.putIfAbsent(
+        "order_items", () => "${kit.id}:$quantity:${kit.amount}:$totalCost");
+    data.putIfAbsent("payment_method", () => "MOMO");
+    data.putIfAbsent("sender_wallet_number", () => phone);
+    data.putIfAbsent("sender_wallet_network", () => mobileNetwork);
+    ApiService.get(authToken)
+        .postData(ApiUrl().verifyPaymentNumberOrder(), data)
+        .then((value) {
+      var statusCode = value["response_code"].toString();
+      if (statusCode == "100") {
+        var message = value["message"].toString();
+        AppAlertDialog().showAlertDialog(context, kit.title, message, () {});
+      } else {
+        var message = value["detail"].toString();
+        AppAlertDialog().showAlertDialog(context, kit.title, message, () {});
+      }
+    }).whenComplete(() {
+      actionCompleted();
+    }).onError((error, stackTrace) {
+      AppAlertDialog()
+          .showAlertDialog(context, kit.title, error.toString(), () {});
+    });
+  }
+
+  //MARK: perform action of buying
+  void buyReproductiveKit(
+      BuildContext context,
+      ReproductiveKitModule kit,
+      String authToken,
+      String quantity,
+      String phone,
+      String mobileNetwork,
+      String otp,
+      Function actionCompleted) {
+    if (quantity.isEmpty) {
+      AppAlertDialog().showAlertDialog(context, "KAP Purchase",
+          "Provide the qunatity of item to buy", () {});
+      return;
+    }
+    if (phone.isEmpty) {
+      AppAlertDialog().showAlertDialog(
+          context, "KAP Purchase", "Provide a payment phone number", () {});
+      return;
+    }
+
+    if (mobileNetwork.isEmpty) {
+      AppAlertDialog().showAlertDialog(
+          context, "KAP Purchase", "Select a network and proceed", () {});
+      return;
+    }
+
+    String totalCost =
+        (double.parse(quantity) * double.parse(kit.amount)).toString();
+    Map<String, String> data = {};
+    data.putIfAbsent("otp", () => otp);
     data.putIfAbsent("currency", () => kit.currency);
     data.putIfAbsent("total_amount", () => totalCost);
     data.putIfAbsent("discount", () => "0.0");
@@ -66,6 +128,95 @@ class ProductUtil {
       AppAlertDialog()
           .showAlertDialog(context, kit.title, error.toString(), () {});
     });
+  }
+
+  //MARK: buying verification action
+  void showBuyingVerifyAction(BuildContext context, SalesOrder salesOrder,
+      ReproductiveKitModule kit, Function actionCompleted) {
+    TextEditingController otpController = TextEditingController();
+    showModalBottomSheet(
+        isScrollControlled: true,
+        enableDrag: true,
+        isDismissible: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(0.0), topRight: Radius.circular(0.0)),
+        ),
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return SafeArea(
+                child: Padding(
+                    padding: MediaQuery.of(context).viewInsets,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 16, right: 16, left: 16, bottom: 16),
+                          child: Text(
+                            "MAKE PAYMENT - ${kit.title}",
+                            textAlign: TextAlign.center,
+                            style: AppTextStyle.normalTextStyle(
+                                Colors.black, 14.0),
+                          ),
+                        ),
+                        const Divider(
+                          height: 0.5,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 16, right: 16, left: 16, bottom: 0),
+                          child: Text(
+                            "Provide information below and proceed to make payment of ${kit.currency} ${kit.amount}",
+                            textAlign: TextAlign.start,
+                            style: AppTextStyle.normalTextStyle(
+                                Colors.black, 12.0),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 16, right: 16, left: 16, bottom: 0),
+                          child: TextField(
+                            maxLines: 1,
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.number,
+                            style: AppTextStyle.normalTextStyle(
+                                Colors.black, 14.0),
+                            textAlign: TextAlign.left,
+                            controller: otpController,
+                            decoration: AppInputDecorator.boxDecorate(
+                                "Enter verification code"),
+                          ),
+                        ),
+                        Container(
+                          height: 44,
+                          width: MediaQuery.of(context).size.width - 32,
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 16, horizontal: 16),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              actionCompleted(otpController.text);
+                            },
+                            child: Text(
+                              "MAKE PAYMENT",
+                              style: AppTextStyle.normalTextStyle(
+                                  Colors.white, 14),
+                            ),
+                            style: AppButtonStyle.squaredSmallColoredEdgeButton,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 4,
+                        ),
+                      ],
+                    )));
+          });
+        });
   }
 
   void showBuyingAction(BuildContext context, ReproductiveKitModule kit,
@@ -187,7 +338,8 @@ class ProductUtil {
                                   quantity: quantityController.text,
                                   reproductiveKitModule: kit,
                                   paymentNetwork: networkValue,
-                                  paymentPhone: phoneController.text));
+                                  paymentPhone: phoneController.text,
+                                  payToken: ""));
                             },
                             child: Text(
                               "MAKE PAYMENT",

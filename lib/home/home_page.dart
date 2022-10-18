@@ -16,6 +16,7 @@ import 'package:knowledge_access_power/util/app_text_style.dart';
 import 'package:knowledge_access_power/util/app_util.dart';
 import 'package:knowledge_access_power/util/progress_indicator_bar.dart';
 
+import '../model/sales_order.dart';
 import '../util/product_util.dart';
 
 class HomePage extends StatefulWidget {
@@ -36,9 +37,6 @@ class _HomePageState extends State<HomePage> {
   final List<String> _loadedPages = [];
   String _nextUrl = "";
   final List<ReproductiveKitModule> _moduleReproductiveKits = [];
-  static final TextEditingController _quantityController =
-      TextEditingController();
-  static final TextEditingController _phoneController = TextEditingController();
 
   @override
   void initState() {
@@ -176,12 +174,38 @@ class _HomePageState extends State<HomePage> {
             widget.user.token,
             salesOrder.quantity,
             salesOrder.paymentPhone,
-            salesOrder.paymentNetwork, () {
+            salesOrder.paymentNetwork,
+            "", () {
           setState(() {
             _loadingData = false;
           });
+          startVerificationProcess(context, salesOrder);
         });
       }
+    });
+  }
+
+  //MARK: show the ui for the verification process
+  void startVerificationProcess(BuildContext context, SalesOrder salesOrder) {
+    ProductUtil().showBuyingVerifyAction(
+        context, salesOrder, salesOrder.reproductiveKitModule, (otp) {
+      if (otp != "") {
+        setState(() {
+          _loadingData = true;
+        });
+      }
+      ProductUtil().verifyReproductiveKit(
+          context,
+          salesOrder.reproductiveKitModule,
+          widget.user.token,
+          salesOrder.quantity,
+          salesOrder.paymentPhone,
+          salesOrder.paymentNetwork,
+          otp, () {
+        setState(() {
+          _loadingData = false;
+        });
+      });
     });
   }
 
