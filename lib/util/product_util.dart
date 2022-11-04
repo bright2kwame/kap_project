@@ -40,7 +40,7 @@ class ProductUtil {
     String totalCost =
         (double.parse(quantity) * double.parse(kit.amount)).toString();
     Map<String, String> data = {};
-    data.putIfAbsent("otp", () => otp);
+    data.putIfAbsent("unique_code", () => otp);
     data.putIfAbsent("currency", () => kit.currency);
     data.putIfAbsent("total_amount", () => totalCost);
     data.putIfAbsent("discount", () => "0.0");
@@ -50,24 +50,29 @@ class ProductUtil {
         "order_items", () => "${kit.id}:$quantity:${kit.amount}:$totalCost");
     data.putIfAbsent("payment_method", () => "MOMO");
     data.putIfAbsent("sender_wallet_number", () => phone);
+    data.putIfAbsent("phone_number", () => phone);
     data.putIfAbsent("sender_wallet_network", () => mobileNetwork);
+
     ApiService.get(authToken)
         .postData(ApiUrl().verifyPaymentNumberOrder(), data)
         .then((value) {
-      var statusCode = value["response_code"].toString();
-      if (statusCode == "100") {
-        var message = value["message"].toString();
-        AppAlertDialog().showAlertDialog(context, kit.title, message, () {});
-      } else {
-        var message = value["detail"].toString();
-        AppAlertDialog().showAlertDialog(context, kit.title, message, () {});
-      }
-    }).whenComplete(() {
-      actionCompleted();
-    }).onError((error, stackTrace) {
-      AppAlertDialog()
-          .showAlertDialog(context, kit.title, error.toString(), () {});
-    });
+          var statusCode = value["response_code"].toString();
+          if (statusCode == "100") {
+            actionCompleted(true);
+          } else {
+            print(value.toString());
+            actionCompleted(false);
+            var message = value["detail"].toString();
+            AppAlertDialog()
+                .showAlertDialog(context, kit.title, message, () {});
+          }
+        })
+        .whenComplete(() {})
+        .onError((error, stackTrace) {
+          actionCompleted(false);
+          AppAlertDialog()
+              .showAlertDialog(context, kit.title, error.toString(), () {});
+        });
   }
 
   //MARK: perform action of buying
@@ -100,7 +105,7 @@ class ProductUtil {
     String totalCost =
         (double.parse(quantity) * double.parse(kit.amount)).toString();
     Map<String, String> data = {};
-    data.putIfAbsent("otp", () => otp);
+    data.putIfAbsent("unique_code", () => otp);
     data.putIfAbsent("currency", () => kit.currency);
     data.putIfAbsent("total_amount", () => totalCost);
     data.putIfAbsent("discount", () => "0.0");

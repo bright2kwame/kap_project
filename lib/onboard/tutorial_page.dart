@@ -22,17 +22,17 @@ class _TutorialPageState extends State<TutorialPage> {
     TutorialItem(
         title: "Welcome To KAP",
         message:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
+            "Welcome to KAP initiative, a project design to teach and educate the young person about issue on reproductive health.",
         imageResource: ImageResource.onboardOne),
     TutorialItem(
         title: "Your Health",
         message:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
+            "Everything about your resproductive health is avaialable for you.",
         imageResource: ImageResource.onboardTwo),
     TutorialItem(
         title: "Stay Informed",
         message:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
+            "In this 21st Century be on top of your game with information on your reproductive health.",
         imageResource: ImageResource.onboardThree),
   ];
 

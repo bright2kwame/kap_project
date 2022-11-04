@@ -165,6 +165,38 @@ class _HomePageState extends State<HomePage> {
   _showBuyingAction(BuildContext buildContext, ReproductiveKitModule kit) {
     ProductUtil().showBuyingAction(context, kit, (salesOrder) {
       if (salesOrder != null) {
+        startVerificationProcess(context, salesOrder);
+      }
+    });
+  }
+
+  //MARK: show the ui for the verification process
+  void startVerificationProcess(BuildContext context, SalesOrder salesOrder) {
+    setState(() {
+      _loadingData = true;
+    });
+    //start the verification page
+    ProductUtil().verifyReproductiveKit(
+        context,
+        salesOrder.reproductiveKitModule,
+        widget.user.token,
+        salesOrder.quantity,
+        salesOrder.paymentPhone,
+        salesOrder.paymentNetwork,
+        "", (isSuccessful) {
+      setState(() {
+        _loadingData = false;
+      });
+      if (isSuccessful) {
+        completeBuyingProcess(salesOrder);
+      }
+    });
+  }
+
+  void completeBuyingProcess(SalesOrder salesOrder) {
+    ProductUtil().showBuyingVerifyAction(
+        context, salesOrder, salesOrder.reproductiveKitModule, (otp) {
+      if (otp.toString().isNotEmpty) {
         setState(() {
           _loadingData = true;
         });
@@ -175,37 +207,12 @@ class _HomePageState extends State<HomePage> {
             salesOrder.quantity,
             salesOrder.paymentPhone,
             salesOrder.paymentNetwork,
-            "", () {
+            otp, () {
           setState(() {
             _loadingData = false;
           });
-          startVerificationProcess(context, salesOrder);
         });
       }
-    });
-  }
-
-  //MARK: show the ui for the verification process
-  void startVerificationProcess(BuildContext context, SalesOrder salesOrder) {
-    ProductUtil().showBuyingVerifyAction(
-        context, salesOrder, salesOrder.reproductiveKitModule, (otp) {
-      if (otp != "") {
-        setState(() {
-          _loadingData = true;
-        });
-      }
-      ProductUtil().verifyReproductiveKit(
-          context,
-          salesOrder.reproductiveKitModule,
-          widget.user.token,
-          salesOrder.quantity,
-          salesOrder.paymentPhone,
-          salesOrder.paymentNetwork,
-          otp, () {
-        setState(() {
-          _loadingData = false;
-        });
-      });
     });
   }
 

@@ -130,22 +130,7 @@ class _AllProductsPageState extends State<AllProductsPage> {
             if (callback == FeedActionType.BUY_KIT.name) {
               ProductUtil().showBuyingAction(context, eventKit, (salesOrder) {
                 if (salesOrder != null) {
-                  setState(() {
-                    _loadingData = true;
-                  });
-                  ProductUtil().buyReproductiveKit(
-                      context,
-                      salesOrder.reproductiveKitModule,
-                      _user.token,
-                      salesOrder.quantity,
-                      salesOrder.paymentPhone,
-                      salesOrder.paymentNetwork,
-                      salesOrder.payToken, () {
-                    setState(() {
-                      _loadingData = false;
-                    });
-                    startVerificationProcess(context, salesOrder);
-                  });
+                  startVerificationProcess(context, salesOrder);
                 }
               });
             } else if (callback == FeedActionType.KIT_SHOP_DIRECTION.name) {
@@ -160,25 +145,47 @@ class _AllProductsPageState extends State<AllProductsPage> {
 
   //MARK: show the ui for the verification process
   void startVerificationProcess(BuildContext context, SalesOrder salesOrder) {
+    setState(() {
+      _loadingData = true;
+    });
+    //start the verification page
+    ProductUtil().verifyReproductiveKit(
+        context,
+        salesOrder.reproductiveKitModule,
+        _user.token,
+        salesOrder.quantity,
+        salesOrder.paymentPhone,
+        salesOrder.paymentNetwork,
+        "", (isSuccessful) {
+      setState(() {
+        _loadingData = false;
+      });
+      if (isSuccessful) {
+        completeBuyingProcess(salesOrder);
+      }
+    });
+  }
+
+  void completeBuyingProcess(SalesOrder salesOrder) {
     ProductUtil().showBuyingVerifyAction(
         context, salesOrder, salesOrder.reproductiveKitModule, (otp) {
-      if (otp != "") {
+      if (otp.toString().isNotEmpty) {
         setState(() {
           _loadingData = true;
         });
-      }
-      ProductUtil().verifyReproductiveKit(
-          context,
-          salesOrder.reproductiveKitModule,
-          _user.token,
-          salesOrder.quantity,
-          salesOrder.paymentPhone,
-          salesOrder.paymentNetwork,
-          otp, () {
-        setState(() {
-          _loadingData = false;
+        ProductUtil().buyReproductiveKit(
+            context,
+            salesOrder.reproductiveKitModule,
+            _user.token,
+            salesOrder.quantity,
+            salesOrder.paymentPhone,
+            salesOrder.paymentNetwork,
+            otp, () {
+          setState(() {
+            _loadingData = false;
+          });
         });
-      });
+      }
     });
   }
 

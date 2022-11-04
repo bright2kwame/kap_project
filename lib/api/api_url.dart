@@ -136,6 +136,6 @@ class ApiUrl {
 
   //MARK: verify the payment otp
   String verifyPaymentNumberOrder() {
-    return getBaseUrl() + "marketplace/place_order/";
+    return getBaseUrl() + "users/initiate_phone_number_verification/";
   }
 }
