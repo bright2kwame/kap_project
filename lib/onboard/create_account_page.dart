@@ -15,6 +15,7 @@ import 'package:knowledge_access_power/auth/keys.dart';
 import 'package:knowledge_access_power/home/home_tab_page.dart';
 import 'package:knowledge_access_power/model/db_operations.dart';
 import 'package:knowledge_access_power/model/user.dart';
+import 'package:knowledge_access_power/popup/bottom_sheet_page.dart';
 import 'package:knowledge_access_power/resources/image_resource.dart';
 import 'package:knowledge_access_power/resources/string_resource.dart';
 import 'package:knowledge_access_power/popup/app_alert_dialog.dart';
@@ -81,6 +82,18 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           child: ElevatedButton(
             onPressed: () {
+              _startEmailPrompt(context);
+            },
+            child: _signInButton(AppColor.primaryColor, "Connect With Email",
+                ImageResource.emailIcon),
+            style: AppButtonStyle.roundedPlainEdgeButton,
+          ),
+        ),
+        Container(
+          width: 320,
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          child: ElevatedButton(
+            onPressed: () {
               _initialiseSocialLogin(context, SocialLoginType.GOOGLE);
             },
             child: _signInButton(AppColor.googleColor, "Sign In With Google",
@@ -128,6 +141,153 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     );
   }
 
+  void _startEmailPrompt(BuildContext context) {
+    BottomSheetPage().showLoginTypeAction(context, (action) {
+      if (action == AccessType.LOGIN.name) {
+        _startLogin(context);
+      } else if (action == AccessType.REGISTER.name) {
+        _startRegistration(context);
+      }
+    });
+  }
+
+  //MARK: start the login api call
+  void _startLogin(BuildContext context) {
+    BottomSheetPage().showLoginAction(context, (data) {
+      if (data is String) {
+        var inputs = data.split("±");
+        String firstValue = inputs[0];
+        String secondValue = inputs[1];
+        if (secondValue == AccessType.RESET_PASSWORD.name) {
+          _startPasswordReset(context, firstValue);
+        } else {
+          if (firstValue.isEmpty || secondValue.isEmpty) {
+            String errorMessage = "Provide email and password to proceed";
+            _presentErrorMessage(context, SocialLoginType.EMAIL, errorMessage);
+            return;
+          }
+          Map<String, String> postData = {};
+          postData.putIfAbsent("email", () => firstValue);
+          postData.putIfAbsent("password", () => secondValue);
+
+          _loginUserAccount(context, postData, SocialLoginType.EMAIL);
+        }
+      }
+    });
+  }
+
+  //MARK: request for password reset
+  void _startPasswordReset(BuildContext context, String emailAddress) {
+    if (emailAddress.isEmpty) {
+      String errorMessage = "Provide email address to proceed";
+      _presentErrorMessage(context, SocialLoginType.EMAIL, errorMessage);
+      return;
+    }
+    _resetPassword(context, emailAddress, SocialLoginType.EMAIL);
+  }
+
+  //MARK: start password reset
+  void _resetPassword(
+      BuildContext context, String email, SocialLoginType type) {
+    final progress = ProgressHUD.of(context);
+    progress?.show();
+    Map<String, String> postData = {};
+    postData.putIfAbsent("email", () => email);
+    ApiService()
+        .postDataNoHeader(ApiUrl().initPasswordReset(), postData)
+        .then((value) {
+      var statusCode = value["response_code"].toString();
+      if (statusCode == "100") {
+        _showPasswordResetScreen(context, email);
+      } else {
+        _presentErrorMessage(context, type, value["message"].toString());
+      }
+    }).whenComplete(() {
+      progress?.dismiss();
+    }).onError((error, stackTrace) {
+      _presentErrorMessage(context, type, error.toString());
+    });
+  }
+
+  void _showPasswordResetScreen(BuildContext context, String email) {
+    BottomSheetPage().showResetAction(context, email, (data) {
+      var inputs = data.split("±");
+      String uniqueCode = inputs[0];
+      String password = inputs[1];
+      String confirmPassword = inputs[2];
+      if (password.isEmpty || confirmPassword.isEmpty || uniqueCode.isEmpty) {
+        _presentErrorMessage(
+            context, SocialLoginType.EMAIL, "Code or password required");
+        return;
+      }
+      if (password != confirmPassword) {
+        _presentErrorMessage(
+            context, SocialLoginType.EMAIL, "Passwords do not match");
+        return;
+      }
+      final progress = ProgressHUD.of(context);
+      progress?.show();
+      Map<String, String> postData = {};
+      postData.putIfAbsent("email", () => email);
+      postData.putIfAbsent("unique_code", () => uniqueCode);
+      postData.putIfAbsent("password", () => password);
+      ApiService()
+          .postDataNoHeader(ApiUrl().passwordReset(), postData)
+          .then((value) {
+        var statusCode = value["response_code"].toString();
+        if (statusCode == "100") {
+          _presentErrorMessage(
+              context, SocialLoginType.EMAIL, "Password reset successfully");
+        } else {
+          String errorMessage = value["message"].toString();
+          _presentErrorMessage(context, SocialLoginType.EMAIL, errorMessage);
+        }
+      }).whenComplete(() {
+        progress?.dismiss();
+      }).onError((error, stackTrace) {
+        String errorMessage = error.toString();
+        _presentErrorMessage(context, SocialLoginType.EMAIL, errorMessage);
+      });
+    });
+  }
+
+  //MARK: trigger registeration process
+  void _startRegistration(BuildContext context) {
+    BottomSheetPage().showRegisterAction(context, (data) {
+      if (data is String) {
+        var inputs = data.split("±");
+        String firstName = inputs[0];
+        String lastName = inputs[1];
+        String emailAddress = inputs[2];
+        String passsword = inputs[3];
+        String passswordConfirm = inputs[4];
+
+        if (firstName.isEmpty || lastName.isEmpty || emailAddress.isEmpty) {
+          String errorMessage = "Provide information and proceed";
+          _presentErrorMessage(context, SocialLoginType.EMAIL, errorMessage);
+          return;
+        }
+
+        if (passsword != passswordConfirm) {
+          String errorMessage = "Passwords do not match";
+          _presentErrorMessage(context, SocialLoginType.EMAIL, errorMessage);
+          return;
+        }
+
+        Map<String, String> postData = {};
+        postData.putIfAbsent("email", () => emailAddress);
+        postData.putIfAbsent("first_name", () => firstName);
+        postData.putIfAbsent("last_name", () => lastName);
+        postData.putIfAbsent("phone", () => "");
+        postData.putIfAbsent("user_avatar", () => "");
+        postData.putIfAbsent("is_email_signup", () => "true");
+        postData.putIfAbsent("password", () => passsword);
+        _createUserAccount(postData, SocialLoginType.EMAIL);
+      }
+    });
+  }
+
+  //MARK: open the terms page
   void _launchURL() async {
     if (!await launch(ApiUrl().mainDomain())) throw 'Could not launch';
   }
@@ -173,8 +333,6 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 //MARK: start social sign in
   Future<void> _initialiseSocialLogin(
       BuildContext context, SocialLoginType type) async {
-    final progress = ProgressHUD.of(context);
-    progress?.show();
     UserCredential? userCredential;
     switch (type) {
       case SocialLoginType.FACEBOOK:
@@ -203,29 +361,56 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
             "phone", () => user.phoneNumber == null ? "" : user.phoneNumber!);
         postData.putIfAbsent(
             "user_avatar", () => user.photoURL == null ? "" : user.photoURL!);
-
-        ApiService()
-            .postDataNoHeader(ApiUrl().completeSignUp(), postData)
-            .then((value) {
-          var statusCode = value["response_code"].toString();
-          if (statusCode == "100") {
-            saveUserAndLogin(value);
-          } else {
-            String errorMessage = value["message"].toString();
-            _presentErrorMessage(context, type, errorMessage);
-          }
-        }).whenComplete(() {
-          progress?.dismiss();
-        }).onError((error, stackTrace) {
-          String errorMessage = error.toString();
-          _presentErrorMessage(context, type, errorMessage);
-        });
+        postData.putIfAbsent("is_email_signup", () => "false");
+        _createUserAccount(postData, type);
         return;
       }
     }
-    progress?.dismiss();
     String errorMessage = "Failed to connect with your account. Try again";
     _presentErrorMessage(context, type, errorMessage);
+  }
+
+  //MARK: login the user
+  void _loginUserAccount(BuildContext context, Map<String, String> postData,
+      SocialLoginType type) {
+    final progress = ProgressHUD.of(context);
+    progress?.show();
+    ApiService().postDataNoHeader(ApiUrl().login(), postData).then((value) {
+      var statusCode = value["response_code"].toString();
+      if (statusCode == "100") {
+        saveUserAndLogin(value);
+      } else {
+        String errorMessage = value["message"].toString();
+        _presentErrorMessage(context, type, errorMessage);
+      }
+    }).whenComplete(() {
+      progress?.dismiss();
+    }).onError((error, stackTrace) {
+      String errorMessage = error.toString();
+      _presentErrorMessage(context, type, errorMessage);
+    });
+  }
+
+  //MARK: create user object
+  void _createUserAccount(Map<String, String> postData, SocialLoginType type) {
+    final progress = ProgressHUD.of(context);
+    progress?.show();
+    ApiService()
+        .postDataNoHeader(ApiUrl().completeSignUp(), postData)
+        .then((value) {
+      var statusCode = value["response_code"].toString();
+      if (statusCode == "100") {
+        saveUserAndLogin(value);
+      } else {
+        String errorMessage = value["message"].toString();
+        _presentErrorMessage(context, type, errorMessage);
+      }
+    }).whenComplete(() {
+      progress?.dismiss();
+    }).onError((error, stackTrace) {
+      String errorMessage = error.toString();
+      _presentErrorMessage(context, type, errorMessage);
+    });
   }
 
   //MARK: show the error, message
@@ -233,10 +418,13 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       BuildContext context, SocialLoginType type, String errorMessage) {
     AppAlertDialog()
         .showAlertDialog(context, StringResource.dialogTitle, errorMessage, () {
-      _initialiseSocialLogin(context, type);
+      if (type != SocialLoginType.EMAIL) {
+        _initialiseSocialLogin(context, type);
+      }
     });
   }
 
+  //MARK: saved and parse user object
   Future<void> saveUserAndLogin(var data) async {
     var userData = data["results"];
     UserItem userItem = ParseApiData().parseUser(userData);

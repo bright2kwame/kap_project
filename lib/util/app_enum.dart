@@ -1,8 +1,4 @@
-enum SocialLoginType {
-  FACEBOOK,
-  GOOGLE,
-  TWITTER,
-}
+enum SocialLoginType { FACEBOOK, GOOGLE, TWITTER, EMAIL }
 
 enum ModuleStageStatus {
   STARTED,
@@ -33,6 +29,6 @@ enum FeedActionType {
   BUY_KIT,
 }
 
-enum PaymentType {
-  CASH, MOMO, CARD, MTN, VOD, AIR
-}
+enum PaymentType { CASH, MOMO, CARD, MTN, VOD, AIR }
+
+enum AccessType { LOGIN, REGISTER, RESET_PASSWORD }

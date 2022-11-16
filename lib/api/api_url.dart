@@ -138,4 +138,29 @@ class ApiUrl {
   String verifyPaymentNumberOrder() {
     return getBaseUrl() + "users/initiate_phone_number_verification/";
   }
+
+  //MARK: fetch all messages
+  String fetchMessages() {
+    return getBaseUrl() + "users/fetch_messages/";
+  }
+
+  //MARK: login endpoint
+  String login() {
+    return getBaseUrl() + "users/login/";
+  }
+
+  //MARK: init password reset
+  String initPasswordReset() {
+    return getBaseUrl() + "users/init_reset/";
+  }
+
+  //MARK: password reset
+  String passwordReset() {
+    return getBaseUrl() + "users/reset_password/";
+  }
+
+  //MARK: verify account
+  String verifyAccount() {
+    return getBaseUrl() + "users/verify_account/";
+  }
 }

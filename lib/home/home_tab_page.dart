@@ -41,11 +41,6 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
     _getData(true);
     //MARK: register and listen for foreground notifications that come in
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Got a message whilst in the foreground!');
-      print('Message data: ${message.data}');
-      if (message.notification != null) {
-        print('Message also contained a notification: ${message.notification}');
-      }
       String title = message.data["messageTitle"];
       String messageBody = message.data["messageBody"];
       AppAlertDialog().showAlertDialog(context, title, messageBody, () {

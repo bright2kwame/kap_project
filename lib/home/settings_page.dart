@@ -183,17 +183,13 @@ class _SettingsPageState extends State<SettingsPage> {
                     _navigateToModulesScreen();
                   },
                 ),
-                GestureDetector(
-                  child: _settingsCard(
-                      "Badges Warned",
-                      "list of all badges earned",
-                      CupertinoIcons.heart,
-                      Colors.brown,
-                      false),
-                  onTap: () {
-                    _navigateToRedemptionsScreen(buildContext);
-                  },
-                ),
+                // GestureDetector(
+                //   child: _settingsCard("Badges", "list of all badges earned",
+                //       CupertinoIcons.heart, Colors.brown, false),
+                //   onTap: () {
+                //     _navigateToRedemptionsScreen(buildContext);
+                //   },
+                // ),
                 GestureDetector(
                   child: _settingsCard(
                       "Leader Board",

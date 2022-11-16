@@ -12,78 +12,78 @@ class CommonWidget {
   //MARK: reproductive kit module item view
   Widget moduleReproductiveKit(BuildContext buildContext,
       ReproductiveKitModule reproductiveKitModule, Function() callback) {
-    return Container(
-        color: Colors.white,
-        width: 250,
-        child: ClipRRect(
-            borderRadius: BorderRadius.circular(2.0),
-            child: Card(
-                elevation: 0.5,
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                          child: ClipRRect(
-                              borderRadius: BorderRadius.circular(2.0),
-                              child: Image(
-                                image: CachedNetworkImageProvider(
-                                    reproductiveKitModule.image),
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: double.infinity,
-                              ))),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(reproductiveKitModule.title, maxLines: 2),
-                      ),
-                      Row(
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.only(left: 8),
-                            child: Icon(
-                              Icons.shop,
-                              size: 12,
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 8.0, right: 8.0),
-                            child: Text(reproductiveKitModule.shopName,
-                                maxLines: 1),
-                          ),
-                        ],
-                      ),
-                      Row(
+    return GestureDetector(
+        onTap: () {
+          callback();
+        },
+        child: Container(
+            color: Colors.white,
+            width: 250,
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(2.0),
+                child: Card(
+                    elevation: 0.5,
+                    child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Expanded(
+                              child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(2.0),
+                                  child: Image(
+                                    image: CachedNetworkImageProvider(
+                                        reproductiveKitModule.image),
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                  ))),
                           Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 4, horizontal: 8.0),
-                              child: Text(
-                                "${reproductiveKitModule.currency} ${reproductiveKitModule.amount}",
-                                maxLines: 1,
-                                style: AppTextStyle.normalTextStyle(
-                                    AppColor.primaryColor, 16),
-                              )),
-                          Expanded(child: Container()),
-                          GestureDetector(
-                            onTap: () {
-                              callback();
-                            },
-                            child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 4, horizontal: 8.0),
-                                child: Text(
-                                  "Buy",
-                                  style: AppTextStyle.normalTextStyle(
-                                      AppColor.primaryColor, 16),
-                                )),
+                            padding: const EdgeInsets.all(8.0),
+                            child:
+                                Text(reproductiveKitModule.title, maxLines: 2),
+                          ),
+                          Row(
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(left: 8),
+                                child: Icon(
+                                  Icons.shop,
+                                  size: 12,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 8.0, right: 8.0),
+                                child: Text(reproductiveKitModule.shopName,
+                                    maxLines: 1),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 4, horizontal: 8.0),
+                                  child: Text(
+                                    "${reproductiveKitModule.currency} ${reproductiveKitModule.amount}",
+                                    maxLines: 1,
+                                    style: AppTextStyle.normalTextStyle(
+                                        AppColor.primaryColor, 16),
+                                  )),
+                              Expanded(child: Container()),
+                              Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 4, horizontal: 8.0),
+                                  child: Text(
+                                    "Buy",
+                                    style: AppTextStyle.normalTextStyle(
+                                        AppColor.primaryColor, 16),
+                                  )),
+                            ],
                           )
-                        ],
-                      )
-                    ]))));
+                        ])))));
   }
 
 //MARK: event module item view
@@ -259,6 +259,13 @@ class CommonWidget {
         child: Card(
             elevation: 0.5,
             child: ListTile(
+              trailing: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.chat,
+                    color: Colors.blue,
+                    size: 15,
+                  )),
               leading: ClipOval(
                 child: Container(
                   child: Center(
