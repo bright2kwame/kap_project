@@ -151,7 +151,7 @@ class ApiUrl {
 
   //MARK: init password reset
   String initPasswordReset() {
-    return getBaseUrl() + "users/init_reset/";
+    return getBaseUrl() + "users/forgot_password/";
   }
 
   //MARK: password reset

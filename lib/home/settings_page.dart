@@ -65,7 +65,7 @@ class _SettingsPageState extends State<SettingsPage> {
             child: Column(
           children: [
             SizedBox(
-              height: 255,
+              height: 265,
               width: MediaQuery.of(context).size.width,
               child: Column(
                 children: [

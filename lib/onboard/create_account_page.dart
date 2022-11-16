@@ -230,7 +230,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       Map<String, String> postData = {};
       postData.putIfAbsent("email", () => email);
       postData.putIfAbsent("unique_code", () => uniqueCode);
-      postData.putIfAbsent("password", () => password);
+      postData.putIfAbsent("new_password", () => password);
       ApiService()
           .postDataNoHeader(ApiUrl().passwordReset(), postData)
           .then((value) {
@@ -282,7 +282,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
         postData.putIfAbsent("user_avatar", () => "");
         postData.putIfAbsent("is_email_signup", () => "true");
         postData.putIfAbsent("password", () => passsword);
-        _createUserAccount(postData, SocialLoginType.EMAIL);
+        _createUserAccount(postData, context, SocialLoginType.EMAIL);
       }
     });
   }
@@ -362,7 +362,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
         postData.putIfAbsent(
             "user_avatar", () => user.photoURL == null ? "" : user.photoURL!);
         postData.putIfAbsent("is_email_signup", () => "false");
-        _createUserAccount(postData, type);
+        _createUserAccount(postData, context, type);
         return;
       }
     }
@@ -392,7 +392,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   }
 
   //MARK: create user object
-  void _createUserAccount(Map<String, String> postData, SocialLoginType type) {
+  void _createUserAccount(Map<String, String> postData, BuildContext context,
+      SocialLoginType type) {
+    print(postData);
     final progress = ProgressHUD.of(context);
     progress?.show();
     ApiService()
@@ -402,7 +404,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       if (statusCode == "100") {
         saveUserAndLogin(value);
       } else {
-        String errorMessage = value["message"].toString();
+        String errorMessage = value["detail"].toString();
         _presentErrorMessage(context, type, errorMessage);
       }
     }).whenComplete(() {
