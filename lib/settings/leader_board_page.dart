@@ -5,6 +5,7 @@ import 'package:knowledge_access_power/api/parse_data.dart';
 import 'package:knowledge_access_power/common/common_widget.dart';
 import 'package:knowledge_access_power/model/db_operations.dart';
 import 'package:knowledge_access_power/model/user.dart';
+import 'package:knowledge_access_power/settings/user_chats_page.dart';
 import 'package:knowledge_access_power/util/app_bar_widget.dart';
 import 'package:knowledge_access_power/util/app_color.dart';
 import 'package:knowledge_access_power/util/progress_indicator_bar.dart';
@@ -90,8 +91,18 @@ class _LeaderBoardPageState extends State<LeaderBoardPage> {
             !_loadedPages.contains(_nextUrl)) {
           _getBoard(_nextUrl, false);
         }
-        return CommonWidget().leaderBoardItemView(buildContext, _users[i]);
+        return CommonWidget()
+            .leaderBoardItemView(buildContext, _users[i], _user.id, () {
+          _navigateToNextScreen(_users[i]);
+        });
       },
     );
+  }
+
+  void _navigateToNextScreen(UserItem userItem) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => UserChatPage(
+              receipient: userItem,
+            )));
   }
 }

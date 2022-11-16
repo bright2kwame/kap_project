@@ -251,7 +251,8 @@ class CommonWidget {
     );
   }
 
-  Widget leaderBoardItemView(BuildContext buildContext, UserItem userItem) {
+  Widget leaderBoardItemView(BuildContext buildContext, UserItem userItem,
+      String currentUser, Function actionTaken) {
     return Container(
       color: Colors.white,
       child: ClipRRect(
@@ -259,13 +260,17 @@ class CommonWidget {
         child: Card(
             elevation: 0.5,
             child: ListTile(
-              trailing: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.chat,
-                    color: Colors.blue,
-                    size: 15,
-                  )),
+              trailing: userItem.id != currentUser
+                  ? IconButton(
+                      onPressed: () {
+                        actionTaken();
+                      },
+                      icon: const Icon(
+                        Icons.chat,
+                        color: Colors.blue,
+                        size: 15,
+                      ))
+                  : const SizedBox(width: 15),
               leading: ClipOval(
                 child: Container(
                   child: Center(

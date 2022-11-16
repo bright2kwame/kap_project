@@ -163,4 +163,14 @@ class ApiUrl {
   String verifyAccount() {
     return getBaseUrl() + "users/verify_account/";
   }
+
+  //MARK: send message
+  String sendMessage() {
+    return getBaseUrl() + "users/send_message/";
+  }
+
+  //MARK: get messages
+  String messages() {
+    return getBaseUrl() + "users/fetch_messages/";
+  }
 }

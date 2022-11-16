@@ -32,3 +32,5 @@ enum FeedActionType {
 enum PaymentType { CASH, MOMO, CARD, MTN, VOD, AIR }
 
 enum AccessType { LOGIN, REGISTER, RESET_PASSWORD }
+
+enum MessageType { SENDER, RECEIPIENT }

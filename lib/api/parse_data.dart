@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:knowledge_access_power/model/chat_message.dart';
 import 'package:knowledge_access_power/model/module_category.dart';
 import 'package:knowledge_access_power/model/module_event.dart';
 import 'package:knowledge_access_power/model/module_options.dart';
@@ -39,6 +40,18 @@ class ParseApiData {
     return user;
   }
 
+  ChatMessage parseChat(var result, String userId) {
+    String message = result["chat_message"].toString();
+    String senderId = result["sender"]["id"].toString();
+
+    var chatMessage = ChatMessage(
+        messageContent: message,
+        messageType: userId != senderId
+            ? MessageType.SENDER.name
+            : MessageType.RECEIPIENT.name);
+    return chatMessage;
+  }
+
   StudyModule parseModule(var result) {
     String id = result["id"].toString();
     String title = result["title"].toString();
@@ -56,7 +69,7 @@ class ParseApiData {
         noOfParticipants: noOfParticipants);
     return studyModule;
   }
-  
+
   //MARK: the sales kit section
   ReproductiveKitModule parseKit(var result) {
     String id = result["id"].toString();
