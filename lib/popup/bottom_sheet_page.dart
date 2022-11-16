@@ -12,6 +12,95 @@ import '../util/app_input_decorator.dart';
 class BottomSheetPage {
   var bottomRadiusCorner = 0.0;
 
+  void showEmailVerification(
+      BuildContext context, String email, Function actionCompleted) {
+    TextEditingController uniqueController = TextEditingController();
+    showModalBottomSheet(
+        isScrollControlled: true,
+        enableDrag: true,
+        isDismissible: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(0.0), topRight: Radius.circular(0.0)),
+        ),
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return SafeArea(
+                child: Padding(
+                    padding: MediaQuery.of(context).viewInsets,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 16, right: 16, left: 16, bottom: 16),
+                          child: Text(
+                            "Email Verification",
+                            textAlign: TextAlign.center,
+                            style: AppTextStyle.normalTextStyle(
+                                Colors.black, 14.0),
+                          ),
+                        ),
+                        const Divider(
+                          height: 0.5,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 16, right: 16, left: 16, bottom: 0),
+                          child: Text(
+                            "Enter the unique code sent to email:" + email,
+                            textAlign: TextAlign.start,
+                            style: AppTextStyle.normalTextStyle(
+                                Colors.black, 12.0),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 16, right: 16, left: 16, bottom: 0),
+                          child: TextField(
+                            maxLines: 1,
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.text,
+                            style: AppTextStyle.normalTextStyle(
+                                Colors.black, 14.0),
+                            textAlign: TextAlign.left,
+                            controller: uniqueController,
+                            decoration: AppInputDecorator.boxDecorate(
+                                "Enter unique code"),
+                          ),
+                        ),
+                        Container(
+                          height: 44,
+                          width: MediaQuery.of(context).size.width - 32,
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 32, horizontal: 16),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              String info = uniqueController.text.trim();
+                              actionCompleted(info);
+                            },
+                            child: Text(
+                              "VERIFY EMAIL",
+                              style: AppTextStyle.normalTextStyle(
+                                  Colors.white, 14),
+                            ),
+                            style: AppButtonStyle.squaredSmallColoredEdgeButton,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 4,
+                        ),
+                      ],
+                    )));
+          });
+        });
+  }
+
   showLoginTypeAction(BuildContext context, Function callback) {
     showModalBottomSheet(
         isScrollControlled: true,

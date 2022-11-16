@@ -441,13 +441,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _refreshPage() {
-    Navigator.pushAndRemoveUntil<dynamic>(
-      context,
-      MaterialPageRoute<dynamic>(
-        builder: (BuildContext context) => const HomeTabScreen(),
-      ),
-      (route) => false,
-    );
+    AppUtil().refreshPage(context);
   }
 
   //MARK: take user to url

@@ -17,6 +17,7 @@ import 'package:knowledge_access_power/util/app_util.dart';
 import 'package:knowledge_access_power/util/progress_indicator_bar.dart';
 
 import '../model/sales_order.dart';
+import '../resources/string_resource.dart';
 import '../util/product_util.dart';
 
 class HomePage extends StatefulWidget {
@@ -37,12 +38,59 @@ class _HomePageState extends State<HomePage> {
   final List<String> _loadedPages = [];
   String _nextUrl = "";
   final List<ReproductiveKitModule> _moduleReproductiveKits = [];
-
+  bool _showVerification = false;
   @override
   void initState() {
     _getFeed(ApiUrl().myFeed(), true);
     _getKitsFeed(ApiUrl().filterProducts(), true);
+    _getActiveStatus();
     super.initState();
+  }
+
+  //MARK: verify the user email acccount
+  void _verifyEmail(String code) {
+    setState(() {
+      _loadingData = true;
+    });
+    Map<String, String> data = {};
+    data.putIfAbsent("unique_code", () => code);
+    data.putIfAbsent("email", () => widget.user.email);
+    ApiService.get(widget.user.token)
+        .postData(ApiUrl().verifyAccount(), data)
+        .then((value) {
+      var statusCode = value["response_code"].toString();
+      if (statusCode == "100") {
+        AppUtil().refreshPage(context);
+      } else {
+        var message = value["detail"].toString();
+        _presentMessage(message);
+      }
+    }).whenComplete(() {
+      setState(() {
+        _loadingData = false;
+      });
+    }).onError((error, stackTrace) {});
+  }
+
+//MARK: error display
+  void _presentMessage(String message) {
+    AppAlertDialog()
+        .showAlertDialog(context, StringResource.dialogTitle, message, () {});
+  }
+
+  void _getActiveStatus() {
+    ApiService.get(widget.user.token)
+        .getData(ApiUrl().myProfile())
+        .then((value) {
+          var statusCode = value["response_code"].toString();
+          if (statusCode == "100") {
+            setState(() {
+              _showVerification = value["results"]["account_verified"];
+            });
+          }
+        })
+        .whenComplete(() {})
+        .onError((error, stackTrace) {});
   }
 
   //MARK: get kit data
@@ -96,6 +144,26 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  Widget _emailVerificationWidget() {
+    return GestureDetector(
+      onTap: () {
+        BottomSheetPage().showEmailVerification(context, widget.user.email,
+            (data) {
+          if (data is String) {
+            if (data.isNotEmpty) {
+              _verifyEmail(data);
+            }
+          }
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.all(8.0),
+        width: MediaQuery.of(context).size.width,
+        child: const Text("Email not verified, click to verify email address"),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -107,6 +175,7 @@ class _HomePageState extends State<HomePage> {
               : Container(
                   height: 4,
                 ),
+          !_showVerification ? _emailVerificationWidget() : Container(),
           SizedBox(
               child: Column(children: [
                 Row(
