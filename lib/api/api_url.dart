@@ -173,4 +173,9 @@ class ApiUrl {
   String messages() {
     return getBaseUrl() + "users/fetch_messages/";
   }
+
+  //MARK: verify app
+  String verifyApp() {
+    return getBaseUrl() + "users/verify_app/";
+  }
 }

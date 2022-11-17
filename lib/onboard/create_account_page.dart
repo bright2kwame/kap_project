@@ -1,15 +1,11 @@
-import 'dart:convert';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_progress_hud/flutter_progress_hud.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:knowledge_access_power/api/api_service.dart';
 import 'package:knowledge_access_power/api/api_url.dart';
-import 'package:knowledge_access_power/api/network_util.dart';
 import 'package:knowledge_access_power/api/parse_data.dart';
 import 'package:knowledge_access_power/auth/keys.dart';
 import 'package:knowledge_access_power/home/home_tab_page.dart';
@@ -35,6 +31,14 @@ class CreateAccountPage extends StatefulWidget {
 }
 
 class _CreateAccountPageState extends State<CreateAccountPage> {
+  bool _approved = false;
+
+  @override
+  void initState() {
+    _showLoginOptions();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -89,42 +93,51 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
             style: AppButtonStyle.roundedPlainEdgeButton,
           ),
         ),
-        Container(
-          width: 320,
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          child: ElevatedButton(
-            onPressed: () {
-              _initialiseSocialLogin(context, SocialLoginType.GOOGLE);
-            },
-            child: _signInButton(AppColor.googleColor, "Sign In With Google",
-                ImageResource.googleIcon),
-            style: AppButtonStyle.roundedPlainEdgeButton,
-          ),
-        ),
-        Container(
-          width: 320,
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          child: ElevatedButton(
-            onPressed: () {
-              _initialiseSocialLogin(context, SocialLoginType.TWITTER);
-            },
-            child: _signInButton(AppColor.twitterColor, "Sign In With Twitter",
-                ImageResource.twitterIcon),
-            style: AppButtonStyle.roundedPlainEdgeButton,
-          ),
-        ),
-        Container(
-          width: 320,
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          child: ElevatedButton(
-            onPressed: () {
-              _initialiseSocialLogin(context, SocialLoginType.FACEBOOK);
-            },
-            child: _signInButton(AppColor.facebookColor,
-                "Sign In With FaceBook", ImageResource.facebookIcon),
-            style: AppButtonStyle.roundedPlainEdgeButton,
-          ),
-        ),
+        _approved
+            ? Container(
+                width: 320,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                child: ElevatedButton(
+                  onPressed: () {
+                    _initialiseSocialLogin(context, SocialLoginType.GOOGLE);
+                  },
+                  child: _signInButton(AppColor.googleColor,
+                      "Sign In With Google", ImageResource.googleIcon),
+                  style: AppButtonStyle.roundedPlainEdgeButton,
+                ),
+              )
+            : Container(),
+        _approved
+            ? Container(
+                width: 320,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                child: ElevatedButton(
+                  onPressed: () {
+                    _initialiseSocialLogin(context, SocialLoginType.TWITTER);
+                  },
+                  child: _signInButton(AppColor.twitterColor,
+                      "Sign In With Twitter", ImageResource.twitterIcon),
+                  style: AppButtonStyle.roundedPlainEdgeButton,
+                ),
+              )
+            : Container(),
+        _approved
+            ? Container(
+                width: 320,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                child: ElevatedButton(
+                  onPressed: () {
+                    _initialiseSocialLogin(context, SocialLoginType.FACEBOOK);
+                  },
+                  child: _signInButton(AppColor.facebookColor,
+                      "Sign In With FaceBook", ImageResource.facebookIcon),
+                  style: AppButtonStyle.roundedPlainEdgeButton,
+                ),
+              )
+            : Container(),
         Container(
           padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 8),
           child: GestureDetector(
@@ -207,6 +220,21 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     }).onError((error, stackTrace) {
       _presentErrorMessage(context, type, error.toString());
     });
+  }
+
+  void _showLoginOptions() {
+    ApiService()
+        .getData(ApiUrl().verifyApp())
+        .then((value) {
+          var statusCode = value["response_code"].toString();
+          if (statusCode == "100") {
+            setState(() {
+              _approved = value["results"]["is_approved"];
+            });
+          }
+        })
+        .whenComplete(() {})
+        .onError((error, stackTrace) {});
   }
 
   void _showPasswordResetScreen(BuildContext context, String email) {
