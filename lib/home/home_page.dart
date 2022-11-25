@@ -72,6 +72,8 @@ class _HomePageState extends State<HomePage> {
     }).onError((error, stackTrace) {});
   }
 
+
+
 //MARK: error display
   void _presentMessage(String message) {
     AppAlertDialog()

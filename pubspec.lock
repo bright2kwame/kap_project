@@ -126,14 +126,14 @@ packages:
       name: contact_picker_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.6.0"
+    version: "4.7.0"
   contact_picker_web:
     dependency: transitive
     description:
       name: contact_picker_web
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.6.0"
+    version: "4.7.0"
   country_code_picker:
     dependency: "direct main"
     description:
@@ -372,7 +372,7 @@ packages:
       name: fluttercontactpicker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.6.0"
+    version: "4.7.0"
   fluttertoast:
     dependency: "direct main"
     description:
@@ -624,7 +624,7 @@ packages:
       name: qr_code_scanner
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.7.0"
+    version: "1.0.1"
   quiver:
     dependency: transitive
     description:
@@ -790,7 +790,7 @@ packages:
       name: twitter_login
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.1"
+    version: "4.2.3"
   typed_data:
     dependency: transitive
     description:
@@ -897,5 +897,5 @@ packages:
     source: hosted
     version: "5.3.1"
 sdks:
-  dart: ">=2.17.0-0 <3.0.0"
-  flutter: ">=2.8.0"
+  dart: ">=2.17.0 <3.0.0"
+  flutter: ">=3.0.0"
